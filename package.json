@@ -1,0 +1,21 @@
+{
+  "name": "projectdemo",
+  "version": "1.0.0",
+  "description": "just a trail ",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "author": "Arjun Khatri",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "lemmatizer": "^0.0.1",
+    "pdf.js-extract": "^0.2.1",
+    "pdfjs-dist": "^4.0.189",
+    "pdfreader": "^3.0.2",
+    "stopword": "^2.0.8"
+  }
+}
