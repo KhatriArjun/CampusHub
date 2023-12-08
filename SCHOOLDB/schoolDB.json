@@ -1,96 +1,86 @@
 {
-    "Teachers" : [
+    "Teachers": [
         {
-            "id" : "T12345",
-            "name" : "John Doe",
-            "email" : "john.doe@example.com",
-            "phone" : "1234567890",
-            "subject" : "Math",
-            "address" : "butwal-10"
-
+            "id": "T12345",
+            "name": "John Doe",
+            "email": "john.doe@example.com",
+            "phone": "1234567890",
+            "subject": "Math",
+            "address": "butwal-10"
         },
         {
-            "id" : "T12349",
-            "name" : "John Doe",
-            "email" : "john.doe@example.com",
-            "phone" : "1234567890",
-            "subject" : "Math",
-            "address" : "butwal-10"
-
+            "id": "T12349",
+            "name": "Hari Prasad",
+            "email": "john.doe@example.com",
+            "phone": "1234567890",
+            "subject": "Science",
+            "address": "butwal-10"
         },
         {
-            "id" : "T12356",
-            "name" : "John Doe",
-            "email" : "john.doe@example.com",
-            "phone" : "1234567890",
-            "subject" : "Math",
-            "address" : "butwal-10"
-
+            "id": "T12356",
+            "name": "John Doe",
+            "email": "john.doe@example.com",
+            "phone": "1234567890",
+            "subject": "Math",
+            "address": "butwal-10"
         },
         {
-            "id" : "T12312",
-            "name" : "John Doe",
-            "email" : "john.doe@example.com",
-            "phone" : "1234567890",
-            "subject" : "Math",
-            "address" : "butwal-10"
-
+            "id": "T12312",
+            "name": "Ramu Aryal",
+            "email": "john.doe@example.com",
+            "phone": "1234567890",
+            "subject": "Physics",
+            "address": "butwal-10"
         },
         {
-            "id" : "T12390",
-            "name" : "John Doe",
-            "email" : "john.doe@example.com",
-            "phone" : "1234567890",
-            "subject" : "Math",
-            "address" : "butwal-10"
-
+            "id": "T12390",
+            "name": "Mohan lal",
+            "email": "john.doe@example.com",
+            "phone": "1234567890",
+            "subject": "Java",
+            "address": "butwal-10"
         }
     ],
-    "Students" : [
-                {
-            "id" : "S12341",
-            "name" : "John Doe",
-            "email" : "john.doe@example.comb",
-            "phone" : "1234567890",
-            "batch" : "2077",
-            "address" : "butwal-10"
-
+    "Students": [
+        {
+            "id": "S12341",
+            "name": "Fiste",
+            "email": "fiste@example.comb",
+            "phone": "1234567890",
+            "batch": "2077",
+            "address": "butwal-10"
         },
         {
-            "id" : "S10345",
-            "name" : "John Doe",
-            "email" : "john.doe@example.com",
-            "phone" : "1234567890",
-            "batch" : "2076",
-            "address" : "butwal-10"
-
+            "id": "S10345",
+            "name": "Putke",
+            "email": "putke@example.com",
+            "phone": "1234567890",
+            "batch": "2076",
+            "address": "butwal-11"
         },
         {
-            "id" : "S19875",
-            "name" : "John Doe",
-            "email" : "john.doe@example.com",
-            "phone" : "1234567890",
-            "batch" : "2076",
-            "address" : "butwal-10"
-
+            "id": "S19875",
+            "name": "Mote",
+            "email": "mote@example.com",
+            "phone": "1234567890",
+            "batch": "2076",
+            "address": "butwal-09"
         },
         {
-            "id" : "S12901",
-            "name" : "John Doe",
-            "email" : "john.doe@example.com",
-            "phone" : "1234567890",
-            "batch" : "2076",
-            "address" : "butwal-10"
-
+            "id": "S12901",
+            "name": "Kale",
+            "email": "kale@example.com",
+            "phone": "1234567890",
+            "batch": "2076",
+            "address": "butwal-08"
         },
         {
-            "id" : "S12129",
-            "name" : "John Doe",
-            "email" : "john.doe@example.com",
-            "phone" : "1234567890",
-            "batch" : "2070",
-            "address" : "butwal-10"
-
+            "id": "S12129",
+            "name": "Haddi",
+            "email": "john.doe@example.com",
+            "phone": "1234567890",
+            "batch": "2070",
+            "address": "butwal-12"
         }
     ]
 }
