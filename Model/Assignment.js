@@ -5,8 +5,7 @@ const Assignment = new mongoose.Schema({
     title : {type : String},
     description : {type : String},
     deadline : {type : Date},
-    subject : {type : String},
-    submitted_students : [{type : mongoose.Type.ObjectId,ref : "Student"}]
+    subject : {type : String}
 })
 
 export default Assignment_Model = mongoose.model("Assignment" , Assignment)
