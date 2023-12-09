@@ -1,7 +1,11 @@
 import jwt from "jsonwebtoken";
+import "dotenv/config";
 
-const getToken = async (email, user) => {
-  const token = jwt.sign({ identifier: user._id }, "#hisIsSecretKey");
+const getToken = async (type, user) => {
+  const token = jwt.sign(
+    { identifier: user._id, userType: type },
+    process.env.secretKey
+  );
   return token;
 };
 

@@ -68,7 +68,7 @@ router.post("/register/otp", async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(global.password, 10);
     const newUsername = global.username;
-    console.log(newUsername);
+
     const newTeacherData = {
       id: id,
       username: newUsername,
@@ -81,7 +81,7 @@ router.post("/register/otp", async (req, res) => {
     };
 
     const TeacherData = await TeacherModel.create(newTeacherData);
-    const token = await getToken(email, TeacherData);
+    const token = await getToken("Teacher", TeacherData);
     const userToReturn = { ...TeacherData.toJSON(), token };
     delete userToReturn.password;
     return res.status(200).json(userToReturn);
@@ -116,7 +116,7 @@ router.post("/register/otp", async (req, res) => {
     };
 
     const StudentData = await StudentModel.create(newStudentData);
-    const token = await getToken(email, StudentData);
+    const token = await getToken("Student", StudentData);
     const userToReturn = { ...StudentData.toJSON(), token };
     delete userToReturn.password;
     return res.status(200).json(userToReturn);
