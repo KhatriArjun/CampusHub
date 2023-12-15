@@ -5,7 +5,7 @@
             "name": "John Doe",
             "email": "john.doe@example.com",
             "phone": "1234567890",
-            "subject": "Math",
+            "subject": "Web Technology",
             "address": "butwal-10"
         },
         {
@@ -13,15 +13,15 @@
             "name": "Hari Prasad",
             "email": "john.doe@example.com",
             "phone": "1234567890",
-            "subject": "Science",
+            "subject": "C Programming",
             "address": "butwal-10"
         },
         {
             "id": "T12356",
-            "name": "John Doe",
+            "name": "John Don",
             "email": "john.doe@example.com",
             "phone": "1234567890",
-            "subject": "Math",
+            "subject": "Microprocessor",
             "address": "butwal-10"
         },
         {
@@ -29,7 +29,7 @@
             "name": "Ramu Aryal",
             "email": "john.doe@example.com",
             "phone": "1234567890",
-            "subject": "Physics",
+            "subject": "Advanced Database",
             "address": "butwal-10"
         },
         {
@@ -37,7 +37,7 @@
             "name": "Mohan lal",
             "email": "john.doe@example.com",
             "phone": "1234567890",
-            "subject": "Java",
+            "subject": "Advanced Java Programming",
             "address": "butwal-10"
         }
     ],
@@ -47,7 +47,7 @@
             "name": "Fiste",
             "email": "fiste@example.comb",
             "phone": "1234567890",
-            "batch": "2077",
+            "batch": "2079",
             "address": "butwal-10"
         },
         {
@@ -55,7 +55,7 @@
             "name": "Putke",
             "email": "putke@example.com",
             "phone": "1234567890",
-            "batch": "2076",
+            "batch": "2079",
             "address": "butwal-11"
         },
         {
@@ -63,7 +63,7 @@
             "name": "Mote",
             "email": "mote@example.com",
             "phone": "1234567890",
-            "batch": "2076",
+            "batch": "2078",
             "address": "butwal-09"
         },
         {
@@ -71,7 +71,7 @@
             "name": "Kale",
             "email": "kale@example.com",
             "phone": "1234567890",
-            "batch": "2076",
+            "batch": "2077",
             "address": "butwal-08"
         },
         {
@@ -79,7 +79,7 @@
             "name": "Haddi",
             "email": "john.doe@example.com",
             "phone": "1234567890",
-            "batch": "2070",
+            "batch": "2076",
             "address": "butwal-12"
         }
     ]

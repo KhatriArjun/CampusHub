@@ -1,7 +1,11 @@
 import mongoose from "mongoose";
 
 const Assignment = new mongoose.Schema({
-  Tid: { type: String, require: true },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Teacher",
+  },
+
   title: { type: String },
   description: { type: String },
   deadline: { type: Date },

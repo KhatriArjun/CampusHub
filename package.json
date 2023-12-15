@@ -11,6 +11,7 @@
   "author": "Arjun Khatri",
   "license": "ISC",
   "dependencies": {
+    "@sbmdkl/nepali-date-converter": "^2.0.2",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
@@ -19,6 +20,7 @@
     "jsonwebtoken": "^9.0.2",
     "lemmatizer": "^0.0.1",
     "mongoose": "^8.0.2",
+    "nepali-datetime": "^1.2.0",
     "nodemailer": "^6.9.7",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",

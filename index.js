@@ -9,6 +9,7 @@ import Student from "./Model/Student.js";
 import Teacher from "./Model/Teacher.js";
 import authRoutes from "./routes/auth.js";
 import assignmentRoutes from "./routes/assignment.js";
+import subjectRoutes from "./routes/subject.js";
 import path from "path";
 import { Server } from "socket.io";
 import cors from "cors";
@@ -87,6 +88,7 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/preprocessing", preprocessingRoutes);
 app.use("/assignment", assignmentRoutes);
+app.use("/subject", subjectRoutes);
 
 // app.get("/", (req, res) => {
 //   res.sendFile("/public/index.html");

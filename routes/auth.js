@@ -3,7 +3,8 @@ let router = express.Router();
 import getToken from "../utils/helper.js";
 import bcrypt from "bcrypt";
 import DB from "../SCHOOLDB/schoolDB.json" assert { type: "json" };
-
+import NepaliDate from "nepali-datetime";
+import subDB from "../SCHOOLDB/subject_db.json" assert { type: "json" };
 import TeacherModel from "../Model/Teacher.js";
 import StudentModel from "../Model/Student.js";
 import OtpModel from "../Model/Otp.js";
@@ -14,7 +15,30 @@ import {
   otpVerify,
 } from "../utils/otpVerification.js";
 
-const createNewUser = async () => {};
+const semCalculate = (batch) => {
+  const now = new NepaliDate();
+  const formattedDate = now.format("YYYY-MM-DD");
+
+  const year = formattedDate.split("-");
+
+  const cal1 = parseInt(year[0]);
+  const month = year[1];
+  const batch1 = parseInt(batch);
+  const diff = cal1 - batch1;
+
+  for (let i = 1; i <= 4; i++) {
+    if (diff == i) {
+      if (month < 6) {
+        return { year: diff.toString(), sem: 0 };
+      } else {
+        return { year: diff.toString(), sem: 1 };
+      }
+    }
+  }
+  if (diff > 4 || diff < 1) {
+    return "Invalid batch";
+  }
+};
 
 router.post("/register/teacher", async (req, res) => {
   const { Tid, username, password } = req.body;
@@ -47,6 +71,7 @@ router.post("/register/teacher", async (req, res) => {
 
 router.post("/register/otp", async (req, res) => {
   const { value } = req.body;
+  console.log(global.id);
 
   if (global.id[0] == "T") {
     const data = DB.Teachers.filter((value) => {
@@ -61,30 +86,31 @@ router.post("/register/otp", async (req, res) => {
     const { name, email, phone, subject, address, id } = data[0];
 
     const user = await OtpModel.findOne({ value: value });
-    if (!(value == user.value)) {
-      res.status(403).json({ err: "Otp doesnot matches!!" });
+    if (user) {
+      const del = await OtpModel.findOneAndDelete({ value: value });
+
+      const hashedPassword = await bcrypt.hash(global.password, 10);
+      const newUsername = global.username;
+
+      const newTeacherData = {
+        id: id,
+        username: newUsername,
+        t_name: name,
+        address,
+        phone,
+        subject,
+        password: hashedPassword,
+        email,
+      };
+
+      const TeacherData = await TeacherModel.create(newTeacherData);
+      const token = await getToken("Teacher", TeacherData);
+      const userToReturn = { ...TeacherData.toJSON(), token };
+      delete userToReturn.password;
+      res.status(200).json(userToReturn);
+    } else {
+      res.status(403).json({ error: "Wrong OTP detected" });
     }
-    const del = await OtpModel.findOneAndDelete({ value: value });
-
-    const hashedPassword = await bcrypt.hash(global.password, 10);
-    const newUsername = global.username;
-
-    const newTeacherData = {
-      id: id,
-      username: newUsername,
-      t_name: name,
-      address,
-      phone,
-      subject,
-      password: hashedPassword,
-      email,
-    };
-
-    const TeacherData = await TeacherModel.create(newTeacherData);
-    const token = await getToken("Teacher", TeacherData);
-    const userToReturn = { ...TeacherData.toJSON(), token };
-    delete userToReturn.password;
-    return res.status(200).json(userToReturn);
   } else {
     const data = DB.Students.filter((value) => {
       if (value.id == global.id) {
@@ -94,32 +120,47 @@ router.post("/register/otp", async (req, res) => {
     if (!data) {
       res.status(400).json({ error: "Invalid Id" });
     }
-
+    console.log(data[0]);
     const { name, email, phone, batch, address, id } = data[0];
+    let subject1;
+    const sem = semCalculate(batch);
 
-    const user = await OtpModel.findOne({ value: value });
-    if (!(value == user.value)) {
-      res.status(403).json({ err: "Otp doesnot matches!!" });
+    console.log("sem:", sem);
+    const subject = subDB[sem.year];
+    console.log(subject);
+    const sem1 = Object.keys(subject);
+    if (sem.sem == 0) {
+      subject1 = subject[sem1[sem.sem]];
+    } else if (sem.sem == 1) {
+      subject1 = subject[sem1[sem.sem]];
+    } else {
+      res.status(404).json({ error: "Semester not found" });
     }
-    const del = await OtpModel.findOneAndDelete({ value: value });
+    const user = await OtpModel.findOne({ value: value });
+    if (user) {
+      await OtpModel.findOneAndDelete({ value: value });
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newStudentData = {
-      id: id,
-      username,
-      s_name: name,
-      address,
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newStudentData = {
+        id: id,
+        username,
+        s_name: name,
+        address,
 
-      batch,
-      password: hashedPassword,
-      email,
-    };
+        batch,
+        password: hashedPassword,
+        email,
+        subjects: subject1,
+      };
 
-    const StudentData = await StudentModel.create(newStudentData);
-    const token = await getToken("Student", StudentData);
-    const userToReturn = { ...StudentData.toJSON(), token };
-    delete userToReturn.password;
-    return res.status(200).json(userToReturn);
+      const StudentData = await StudentModel.create(newStudentData);
+      const token = await getToken("Student", StudentData);
+      const userToReturn = { ...StudentData.toJSON(), token };
+      delete userToReturn.password;
+      return res.status(200).json(userToReturn);
+    } else {
+      res.status(405).json({ error: "OTP doesnot match" });
+    }
   }
 });
 
