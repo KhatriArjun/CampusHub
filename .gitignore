@@ -1,4 +1,4 @@
 node_modules/
-.env/
-test.js/
-logindata.txt/
+.env
+test.js
+logindata.txt
