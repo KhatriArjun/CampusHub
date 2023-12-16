@@ -2,11 +2,14 @@ import express from "express";
 
 import "dotenv/config";
 let router = express.Router();
-
+import multer from "multer";
+import plagiarism from "../plagiarism/preprocessing.js";
 import passport from "passport";
 import Teacher from "../Model/Teacher.js";
 import Student from "../Model/Student.js";
 import Assignment from "../Model/Assignment.js";
+import TokenizeDB from "../Model/Tokenizedata.js";
+import detectThreshold from "../plagiarism/kmpalgo.js";
 
 router.post(
   "/createAssignment",
@@ -87,11 +90,61 @@ router.get(
   }
 );
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    // console.log("this is req from destination: ", req);
+
+    return cb(null, "./pdf");
+  },
+  filename: function (req, file, cb) {
+    // console.log("this is req from filename: ", req);
+
+    // return cb(null, `${req.user._id}_${file.originalname}`);
+    return cb(null, `${req.user._id}.pdf`);
+    // return cb(null, `${file.originalname}`);
+  },
+});
+
+const upload = multer({ storage });
+
+const middleware = async (req, res, next) => {
+  console.log("middleware called");
+  const filename = req.user._id;
+  const currentdata = await plagiarism(filename);
+  const checkdata = await TokenizeDB.findOne({
+    "assignmentof.assignment": "657b2ce46a1d85a5c3c8aafc",
+  });
+  console.log(checkdata);
+  if (checkdata) {
+    const prevdata = checkdata.assignmentof[0].tokens;
+    const threshold = detectThreshold(currentdata, prevdata);
+    console.log(threshold);
+  } else {
+    const finaldata = await TokenizeDB.create({
+      assignmentof: {
+        assignment: "657b2ce46a1d85a5c3c8aafc",
+        tokens: currentdata,
+        owner: filename,
+      },
+    });
+
+    console.log(finaldata);
+  }
+  next();
+};
+
 router.post(
   "/submitAssignment",
   passport.authenticate("jwt", { session: false }),
+  upload.single("file"),
+  middleware,
+
   async (req, res) => {
+    // console.log("called");
     const assignment = req.body;
+    const filename = req.file;
+    // console.log("this is from body: ", assignment);
+    // console.log("this is from file: ", filename);
   }
 );
 

@@ -1,8 +1,7 @@
-import express from "express";
-let router = express.Router();
-
 import { PdfReader } from "pdfreader";
 import { lemmatizer } from "lemmatizer";
+import { fileURLToPath } from "url";
+import path from "path";
 
 const eng = [
   "0",
@@ -1177,25 +1176,32 @@ const eng = [
   "zz",
 ];
 
-router.get("/", (req, res) => {
+const preprocess = (filename) => {
+  const __dirname = path.resolve();
+  const absolutePath = path.resolve(__dirname, `./pdf/${filename}.pdf`);
   let newData = "";
   let tokenizeData = [];
 
-  new PdfReader().parseFileItems("try1.pdf", (err, item) => {
-    if (err) {
-      console.log(err);
-    } else if (!item) {
-      tokenizeData = tokenizeData.filter((value) => !eng.includes(value));
-      tokenizeData = tokenizeData.map((token) => lemmatizer(token));
-      res.send(tokenizeData);
-      console.warn("end of file");
-    } else if (item.text) {
-      newData += item.text.toLowerCase();
-      let punctuationless = newData.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
-      newData = punctuationless.replace(/\s{2,}/g, " ");
-      tokenizeData = newData.split(/\W+/);
-    }
+  return new Promise((resolve, reject) => {
+    new PdfReader().parseFileItems(absolutePath, (err, item) => {
+      if (err) {
+        console.log(err);
+        reject(err);
+      } else if (!item) {
+        tokenizeData = tokenizeData.filter((value) => !eng.includes(value));
+        tokenizeData = tokenizeData.map((token) => lemmatizer(token));
+        resolve(tokenizeData);
+      } else if (item.text) {
+        newData += item.text.toLowerCase();
+        let punctuationless = newData.replace(
+          /[.,\/#!$%\^&\*;:{}=\-_`~()]/g,
+          ""
+        );
+        newData = punctuationless.replace(/\s{2,}/g, " ");
+        tokenizeData = newData.split(/\W+/);
+      }
+    });
   });
-});
+};
 
-export default router;
+export default preprocess;
