@@ -10,12 +10,17 @@ import Teacher from "./Model/Teacher.js";
 import authRoutes from "./routes/auth.js";
 import assignmentRoutes from "./routes/assignment.js";
 import subjectRoutes from "./routes/subject.js";
+import settingRoutes from "./routes/setting.js";
+import dashboardRoutes from "./routes/dashboard.js";
 import path from "path";
-import { Server } from "socket.io";
+
 import cors from "cors";
-import { Socket } from "node:dgram";
+
+import { Server } from "socket.io";
 import { Strategy } from "passport-jwt";
 import { ExtractJwt } from "passport-jwt";
+const app = express();
+app.use(cors({}));
 
 mongoose
   .connect(
@@ -47,7 +52,7 @@ passport.use(
       }
 
       if (user) {
-        return done(null, user);
+        return done(null, { user: user, type: jwt_payload.userType });
       } else {
         // Create a new user based on the JWT payload
         const newUser =
@@ -71,9 +76,6 @@ passport.use(
   })
 );
 
-const app = express();
-const server = createServer(app);
-
 // const io = new Server(server);
 // //handling socket io
 // io.on("connection", (socket) => {
@@ -82,13 +84,55 @@ const server = createServer(app);
 //   });
 // });
 
-app.use(cors({}));
+const server = createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "http://127.0.0.1:5173",
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+io.on("connection", (socket) => {
+  console.log("User connected", socket.id);
+
+  socket.on("join_room", (data) => {
+    socket.join(data);
+    console.log("user with id:", socket.id, "connected in a room:", data);
+  });
+
+  socket.on("send_message", (data) => {
+    console.log(data.subject);
+    socket.to(data.subject).emit("recieve_message", data);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected", socket.id);
+  });
+});
+
+// app.use((req, res, next) => {
+//   res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+
+//   res.setHeader(
+//     "Access-Control-Allow-Methods",
+//     "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+//   );
+//   res.setHeader(
+//     "Access-Control-Allow-Headers",
+//     "X-Requested-With,content-type"
+//   );
+//   res.setHeader("Access-Control-Allow-Credentials", true);
+//   next();
+// });
+
 app.use(express.json());
 // app.use(express.static(path.resolve("./public")));
 app.use("/auth", authRoutes);
 app.use("/preprocessing", preprocessingRoutes);
 app.use("/assignment", assignmentRoutes);
 app.use("/subject", subjectRoutes);
+app.use("/setting", settingRoutes);
+app.use("/dashboard", dashboardRoutes);
 
 // app.get("/", (req, res) => {
 //   res.sendFile("/public/index.html");

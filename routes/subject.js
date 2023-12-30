@@ -11,7 +11,7 @@ router.get(
   "/mysubjectDashboard",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    const id = req.user._id;
+    const id = req.user.user._id;
     // const keys = Object.keys(subDB);
 
     // const now = new NepaliDate();

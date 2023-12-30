@@ -2,6 +2,7 @@ import { PdfReader } from "pdfreader";
 import { lemmatizer } from "lemmatizer";
 import { fileURLToPath } from "url";
 import path from "path";
+import { log } from "console";
 
 const eng = [
   "0",
@@ -1189,15 +1190,23 @@ const preprocess = (filename) => {
         reject(err);
       } else if (!item) {
         tokenizeData = tokenizeData.filter((value) => !eng.includes(value));
+
         tokenizeData = tokenizeData.map((token) => lemmatizer(token));
+
+        // console.log(tokenizeData);
         resolve(tokenizeData);
       } else if (item.text) {
         newData += item.text.toLowerCase();
+
+        // newData = newData.trim().split(/\s+/);
+        // console.log("1.1:", newData);
         let punctuationless = newData.replace(
           /[.,\/#!$%\^&\*;:{}=\-_`~()]/g,
-          ""
+          " "
         );
+
         newData = punctuationless.replace(/\s{2,}/g, " ");
+
         tokenizeData = newData.split(/\W+/);
       }
     });
