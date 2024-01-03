@@ -2,7 +2,7 @@ import express from "express";
 import { createServer } from "node:http";
 import preprocessingRoutes from "./plagiarism/preprocessing.js";
 import mongoose from "mongoose";
-import "dotenv/config.js";
+import "dotenv/config.js"
 // import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 import passport from "passport";
 import Student from "./Model/Student.js";
@@ -101,7 +101,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("send_message", (data) => {
-    console.log(data.subject);
+    console.log(data);
     socket.to(data.subject).emit("recieve_message", data);
   });
 
