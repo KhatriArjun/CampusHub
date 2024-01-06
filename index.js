@@ -2,7 +2,7 @@ import express from "express";
 import { createServer } from "node:http";
 import preprocessingRoutes from "./plagiarism/preprocessing.js";
 import mongoose from "mongoose";
-import "dotenv/config.js"
+import "dotenv/config.js";
 // import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 import passport from "passport";
 import Student from "./Model/Student.js";
@@ -13,21 +13,33 @@ import subjectRoutes from "./routes/subject.js";
 import settingRoutes from "./routes/setting.js";
 import dashboardRoutes from "./routes/dashboard.js";
 import path from "path";
+import messageRoutes from "./routes/message.js";
 
 import cors from "cors";
 
 import { Server } from "socket.io";
 import { Strategy } from "passport-jwt";
 import { ExtractJwt } from "passport-jwt";
+// import { socketConnection } from "./utils/start.js";
 const app = express();
 app.use(cors({}));
 
+// mongoose
+//   .connect(
+//     `mongodb+srv://campushub4u` +
+//       `:` +
+//       process.env.Password +
+//       `@cluster1.ozwg2bh.mongodb.net/?retryWrites=true&w=majority`
+//   )
+//   .then((x) => {
+//     console.log("connected to database");
+//   })
+//   .catch((err) => {
+//     console.log("error while connecting:", err);
+//   });
 mongoose
   .connect(
-    `mongodb+srv://campushub4u` +
-      `:` +
-      process.env.Password +
-      `@cluster1.ozwg2bh.mongodb.net/?retryWrites=true&w=majority`
+    `mongodb+srv://campushub4u:${process.env.Password}@cluster1.ozwg2bh.mongodb.net/?retryWrites=true&w=majority`
   )
   .then((x) => {
     console.log("connected to database");
@@ -76,13 +88,8 @@ passport.use(
   })
 );
 
-// const io = new Server(server);
-// //handling socket io
-// io.on("connection", (socket) => {
-//   socket.on("message", (message) => {
-//     io.emit("message", message);
-//   });
-// });
+// const server = createServer(app);
+// socketConnection(server);
 
 const server = createServer(app);
 const io = new Server(server, {
@@ -133,6 +140,7 @@ app.use("/assignment", assignmentRoutes);
 app.use("/subject", subjectRoutes);
 app.use("/setting", settingRoutes);
 app.use("/dashboard", dashboardRoutes);
+app.use("/message", messageRoutes);
 
 // app.get("/", (req, res) => {
 //   res.sendFile("/public/index.html");

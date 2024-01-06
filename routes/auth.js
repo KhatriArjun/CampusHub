@@ -14,6 +14,8 @@ import {
   otpAuthenticate,
   otpVerify,
 } from "../utils/otpVerification.js";
+import Teacher_Modal from "../Model/Teacher.js";
+import Student_Modal from "../Model/Student.js";
 
 const semCalculate = (batch) => {
   const now = new NepaliDate();
@@ -238,7 +240,23 @@ router.post("/login/otp", async (req, res) => {
     res.status(403).json({ err: "Otp doesnot matches!!" });
   }
   const del = await OtpModel.findOneAndDelete({ value: value });
-  res.status(201).json({ message: "Congratulations !!" });
+
+  if (global.id[0] == "T") {
+    const data = await TeacherModel.findOne({ id: global.id });
+    const token = await getToken("Teacher", data);
+    // console.log(token);
+    const userToReturn = { ...data.toJSON(), token };
+
+    delete userToReturn.password;
+    return res.status(200).json(userToReturn);
+  } else {
+    const data = await StudentModel.findOne({ id: global.id });
+    const token = await getToken("Student", data);
+    // console.log(token);
+    const userToReturn = { ...data.toJSON(), token };
+    delete userToReturn.password;
+    return res.status(200).json(userToReturn);
+  }
 });
 
 export default router;
