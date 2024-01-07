@@ -40,7 +40,7 @@
             "subject": "Advanced Java Programming",
             "address": "butwal-10"
         },
-          {
+        {
             "id": "T10020",
             "name": "Mohans lals",
             "email": "john.doe@example.com",
@@ -170,6 +170,7 @@
             "batch": "2076",
             "address": "butwal-12"
         }
+      
 
     ]
 }
