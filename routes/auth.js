@@ -238,24 +238,25 @@ router.post("/login/otp", async (req, res) => {
   const user = await OtpModel.findOne({ value: value });
   if (!(value == user.value)) {
     res.status(403).json({ err: "Otp doesnot matches!!" });
-  }
-  const del = await OtpModel.findOneAndDelete({ value: value });
-
-  if (global.id[0] == "T") {
-    const data = await TeacherModel.findOne({ id: global.id });
-    const token = await getToken("Teacher", data);
-    // console.log(token);
-    const userToReturn = { ...data.toJSON(), token };
-
-    delete userToReturn.password;
-    return res.status(200).json(userToReturn);
   } else {
-    const data = await StudentModel.findOne({ id: global.id });
-    const token = await getToken("Student", data);
-    // console.log(token);
-    const userToReturn = { ...data.toJSON(), token };
-    delete userToReturn.password;
-    return res.status(200).json(userToReturn);
+    const del = await OtpModel.findOneAndDelete({ value: value });
+
+    if (global.id[0] == "T") {
+      const data = await TeacherModel.findOne({ id: global.id });
+      const token = await getToken("Teacher", data);
+      // console.log(token);
+      const userToReturn = { ...data.toJSON(), token };
+
+      delete userToReturn.password;
+      return res.status(200).json(userToReturn);
+    } else {
+      const data = await StudentModel.findOne({ id: global.id });
+      const token = await getToken("Student", data);
+      // console.log(token);
+      const userToReturn = { ...data.toJSON(), token };
+      delete userToReturn.password;
+      return res.status(200).json(userToReturn);
+    }
   }
 });
 
