@@ -14,9 +14,12 @@ router.post(
   async (req, res) => {
     const { subjectName, groupName } = req.body;
     const type = req.user.type;
+    console.log(req.user.user._id)
     const id = req.user.user._id;
+    console.log(type)
     if (type == "Teacher") {
       const checkgroup = await Group.findOne({ subject: subjectName });
+      console.log(checkgroup)
       if (checkgroup) {
         res.status(400).json({ err: "Already exist" });
       } else {
@@ -35,6 +38,7 @@ router.post(
           collaborators: students,
         };
         const result = await Group.create(newdata);
+        console.log("This from result",result)
         res.json(result);
       }
     } else {

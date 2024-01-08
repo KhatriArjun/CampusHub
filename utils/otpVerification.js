@@ -10,9 +10,15 @@ export const sendEmail = async (email) => {
     host: "smtp.ethereal.email",
     port: 587,
     auth: {
+<<<<<<< HEAD
         user: 'arvilla.altenwerth@ethereal.email',
         pass: 'XCRGDPdA7DV9zuBgbD'
     },
+=======
+      user: 'esteban.emard@ethereal.email',
+      pass: 'c5xCkKpWkXJwhJYHZ3'
+  }
+>>>>>>> 2b76dd026f16b0f15781e4d72aa21e306055e5d6
   });
   async function main() {
     const info = await transporter.sendMail({
