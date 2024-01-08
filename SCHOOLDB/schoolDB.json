@@ -5,7 +5,7 @@
             "name": "John Doe",
             "email": "john.doe@example.com",
             "phone": "1234567890",
-            "subject": "Web Technology",
+            "subject": ["Web Technology"],
             "address": "butwal-10"
         },
         {
@@ -13,7 +13,7 @@
             "name": "Hari Prasad",
             "email": "john.doe@example.com",
             "phone": "1234567890",
-            "subject": "C Programming",
+            "subject": ["C Programming"],
             "address": "butwal-10"
         },
         {
@@ -21,7 +21,7 @@
             "name": "John Don",
             "email": "john.doe@example.com",
             "phone": "1234567890",
-            "subject": "Microprocessor",
+            "subject": ["Microprocessor"],
             "address": "butwal-10"
         },
         {
@@ -29,7 +29,7 @@
             "name": "Ramu Aryal",
             "email": "john.doe@example.com",
             "phone": "1234567890",
-            "subject": "Database Management System",
+            "subject": ["Database Management System"],
             "address": "butwal-10"
         },
         {
@@ -37,7 +37,7 @@
             "name": "Mohan lal",
             "email": "john.doe@example.com",
             "phone": "1234567890",
-            "subject": "Advanced Java Programming",
+            "subject": ["Advanced Java Programming"],
             "address": "butwal-10"
         },
         {
@@ -45,7 +45,7 @@
             "name": "Mohans lals",
             "email": "john.doe@example.com",
             "phone": "1234567890",
-            "subject": "Advanced Java Programming",
+            "subject": ["Advanced Java Programming"],
             "address": "butwal-10"
         },
         {
@@ -53,7 +53,7 @@
             "name": "Manmohan lals",
             "email": "johns12.doe@example.com",
             "phone": "1234567890",
-            "subject": "Advanced Java Programming",
+            "subject": ["Advanced Java Programming"],
             "address": "butwal-10"
         },
         {
@@ -61,7 +61,7 @@
             "name": "Manmohans lals",
             "email": "manmohanlals.doe@example.com",
             "phone": "1234567890",
-            "subject": "Advanced Java Programming",
+            "subject": ["Advanced Java Programming"],
             "address": "butwal-10"
         },
         {
@@ -69,7 +69,31 @@
             "name": "Manmohans lals",
             "email": "manmohanlals.doe@example.com",
             "phone": "1234567890",
-            "subject": "Advanced Java Programming",
+            "subject": ["Advanced Java Programming"],
+            "address": "butwal-10"
+        },
+        {
+            "id": "T10024",
+            "name": "hari prasad",
+            "email": "manmohanlals.doe@example.com",
+            "phone": "1234567890",
+            "subject": ["Advanced Java Programming"],
+            "address": "butwal-10"
+        },
+        {
+            "id": "T10025",
+            "name": "Shyam",
+            "email": "manmohanlals.doe@example.com",
+            "phone": "1234567890",
+            "subject": ["Advanced Java Programming"],
+            "address": "butwal-10"
+        },
+        {
+            "id": "T10026",
+            "name": "Shyam",
+            "email": "manmohanlals.doe@example.com",
+            "phone": "1234567890",
+            "subject": ["Advanced Java Programming" , "DSA" , "POM"],
             "address": "butwal-10"
         }
     ],

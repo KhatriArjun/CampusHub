@@ -14,35 +14,40 @@ router.post(
   async (req, res) => {
     const { subjectName, groupName } = req.body;
     const type = req.user.type;
-    console.log(req.user.user._id)
+    console.log("this is id",req.user.user._id)
     const id = req.user.user._id;
-    console.log(type)
+    console.log("this is type",type)
     if (type == "Teacher") {
       const checkgroup = await Group.findOne({ subject: subjectName });
-      console.log(checkgroup)
+      console.log("check group",checkgroup)
       if (checkgroup) {
-        res.status(400).json({ err: "Already exist" });
+        res.json({ err: "Already exist" });
       } else {
         const data = await Teacher_Modal.findOne({ _id: id });
         if (!data) {
-          res.status(400).json({ err: "Not found" });
+          res.json({ err: "Teacher is not found" });
         }
         const subject = data.subject.includes(subjectName);
-        const list = await Student_Model.find({ subjects: subjectName });
-        const students = list.map((student) => student._id.toString());
-
-        const newdata = {
-          subject: subjectName,
-          name: groupName,
-          teacher: id,
-          collaborators: students,
-        };
-        const result = await Group.create(newdata);
-        console.log("This from result",result)
-        res.json(result);
+        if(subject === false){
+          res.json({ msg: "You are not allowed to create this group" });
+        }else{
+          const list = await Student_Model.find({ subjects: subjectName });
+          const students = list.map((student) => student._id.toString());
+  
+          const newdata = {
+            subject: subjectName,
+            name: groupName,
+            teacher: id,
+            collaborators: students,
+          };
+          const result = await Group.create(newdata);
+          console.log("This from result group created",result)
+          res.json(result);
+        }
+        
       }
     } else {
-      res.status(400).json({ err: "Not Allowed" });
+      res.json({ err: "Not Allowed" });
     }
   }
 );
@@ -64,6 +69,17 @@ router.get(
     }
   }
 );
+
+router.get("/getteacher" ,async (req , res) => {
+  const data = await Teacher_Modal.findOne({_id : "659bb9dc920177f731a30acd"});
+  let subject = "POMs"
+  if(data.subject.includes(subject)){
+    res.json({msg : "u can create "})
+  }
+  else{
+    res.json({msg : "u cannot  create "})
+  }
+})
 
 router.post(
   "/savemessage",
