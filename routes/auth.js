@@ -53,10 +53,10 @@ router.post("/register/teacher", async (req, res) => {
       return value;
     }
   });
-  if (!data) {
+  if (data.length==0) {
     res.status(400).json({ error: "Invalid Id" });
   }
-
+else{
   const { name, email, phone, subject, address } = data[0];
   const teacher = await TeacherModel.findOne({ id: Tid });
   if (teacher) {
@@ -69,6 +69,8 @@ router.post("/register/teacher", async (req, res) => {
   await sendEmail(email);
 
   return res.status(200).json({ message: "Successfully verified !!" });
+}
+  
 });
 
 router.post("/register/otp", async (req, res) => {
@@ -176,11 +178,14 @@ router.post("/register/student", async (req, res) => {
     if (value.id == Sid) {
       return value;
     }
+    
   });
-  if (!data) {
+  console.log(data)
+  if (data.length==0) {
     res.status(400).json({ error: "Invalid Id" });
   }
-  const { name, email, phone, batch, address } = data[0];
+  else{
+    const { name, email, phone, batch, address } = data[0];
   const student = await StudentModel.findOne({ id: Sid });
   if (student) {
     return res
@@ -192,6 +197,7 @@ router.post("/register/student", async (req, res) => {
   await sendEmail(email);
 
   return res.status(200).json({ message: "Successfully verified !!" });
+  }
 });
 
 router.post("/login/teacher", async (req, res) => {
@@ -236,7 +242,8 @@ router.post("/login/otp", async (req, res) => {
   const { value } = req.body;
 
   const user = await OtpModel.findOne({ value: value });
-  if (!(value == user.value)) {
+  
+  if (!user) {
     res.status(403).json({ err: "Otp doesnot matches!!" });
   } else {
     const del = await OtpModel.findOneAndDelete({ value: value });
