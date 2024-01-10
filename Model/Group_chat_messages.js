@@ -10,8 +10,7 @@ const Group_chat_message = new mongoose.Schema({
       from: { type: mongoose.Schema.Types.ObjectId, refPath: "model_type" },
       model_type: {
         type: String,
-        enum: ["Student", "Teacher"],
-        required: true,
+        enum: ["Student", "Teacher"]
       },
       //   to: { type: mongoose.Schema.Types.ObjectId, ref: "Student" },
       message: String,

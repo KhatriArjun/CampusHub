@@ -8,14 +8,13 @@ import subDB from "../SCHOOLDB/subject_db.json" assert { type: "json" };
 import TeacherModel from "../Model/Teacher.js";
 import StudentModel from "../Model/Student.js";
 import OtpModel from "../Model/Otp.js";
-
+import Group_Model from "../Model/Group.js";
 import {
   sendEmail,
   otpAuthenticate,
   otpVerify,
 } from "../utils/otpVerification.js";
-import Teacher_Modal from "../Model/Teacher.js";
-import Student_Modal from "../Model/Student.js";
+// import { isArrowFunction } from "typescript";
 
 const semCalculate = (batch) => {
   const now = new NepaliDate();
@@ -115,7 +114,9 @@ router.post("/register/otp", async (req, res) => {
     } else {
       res.status(403).json({ error: "Wrong OTP detected" });
     }
-  } else {
+  }
+  
+   else {
     const data = DB.Students.filter((value) => {
       if (value.id == global.id) {
         return value;
@@ -140,17 +141,16 @@ router.post("/register/otp", async (req, res) => {
     } else {
       res.status(404).json({ error: "Semester not found" });
     }
-    const user = await OtpModel.findOne({ value: value });
-    if (user) {
-      await OtpModel.findOneAndDelete({ value: value });
-
+    const user_otp = await OtpModel.findOne({ value: value });
+    if (user_otp) {
+     const is_deleted_otp =  await OtpModel.findOneAndDelete({ value: value });
+     if(is_deleted_otp._id){
       const hashedPassword = await bcrypt.hash(password, 10);
       const newStudentData = {
         id: id,
         username,
         s_name: name,
         address,
-
         batch,
         password: hashedPassword,
         email,
@@ -158,11 +158,19 @@ router.post("/register/otp", async (req, res) => {
       };
 
       const StudentData = await StudentModel.create(newStudentData);
+      console.log("register student check" , StudentData)
       const token = await getToken("Student", StudentData);
       const userToReturn = { ...StudentData.toJSON(), token };
       delete userToReturn.password;
+
+     const added_new_student_to_group =  await Group_Model.updateMany(
+        {subject : {$in : StudentData.subjects}},
+        { $push: { collaborators: (StudentData._id).toString() } }
+        )
+        console.log("added_new_student_to_group" , added_new_student_to_group)
       return res.status(200).json(userToReturn);
-    } else {
+    }  }
+    else {
       res.status(405).json({ error: "OTP doesnot match" });
     }
   }
