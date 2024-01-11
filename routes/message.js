@@ -7,10 +7,10 @@ import Teacher_Modal from "../Model/Teacher.js";
 import Student_Model from "../Model/Student.js";
 import groupchatmsg from "../Model/Group_chat_messages.js";
 import Student_Modal from "../Model/Student.js";
+import Otp_Model from "../Model/Otp.js";
 
-import Submitted_Assignment_Modal from "../Model/Submitted_Assignment.js"
+import Submitted_Assignment_Modal from "../Model/Submitted_Assignment.js";
 import Assignment_Model from "../Model/Assignment.js";
-
 
 router.post(
   "/creategroup",
@@ -20,25 +20,23 @@ router.post(
     const type = req.user.type;
     const id = req.user.user._id;
     if (type == "Teacher") {
-
       const data = await Teacher_Modal.findOne({ _id: id });
-        if (!data) {
-          res.json({ err: "Teacher is not found" });
-        }
-        else{
-          const subject = data.subject.includes(subjectName);
+      if (!data) {
+        res.json({ err: "Teacher is not found" });
+      } else {
+        const subject = data.subject.includes(subjectName);
 
-        if(subject === false){
+        if (subject === false) {
           res.json({ msg: "You are not allowed to create this group" });
-        }else{
+        } else {
           const checkgroup = await Group.findOne({ subject: subjectName });
-    
+
           if (checkgroup) {
             res.json({ err: "Already exist" });
-          }else{
+          } else {
             const list = await Student_Model.find({ subjects: subjectName });
             const students = list.map((student) => student._id.toString());
-    
+
             const newdata = {
               subject: subjectName,
               name: groupName,
@@ -49,7 +47,7 @@ router.post(
             res.json(result);
           }
         }
-        }
+      }
     } else {
       res.json({ err: "Not Allowed" });
     }
@@ -62,7 +60,7 @@ router.get(
   async (req, res) => {
     const type = req.user.type;
     const id = req.user.user._id;
-    
+
     if (type == "Teacher") {
       const groups = await Group.find({ teacher: id });
       res.status(200).json(groups);
@@ -76,19 +74,13 @@ router.get(
 );
 
 // test purpose
-router.get("/get_all_groups",
-     async (req , res) => {
-      //  const student = await Student_Model.find();
- 
-
-      const assignment = await Assignment_Model.findOne({_id : "659e6fee06f7ae1287a1cc5c"})
-      res.send(assignment)
-       
-
-})
+router.get("/get_all_groups", async (req, res) => {
+  const del = await Otp_Model.deleteMany();
+  res.send(del);
+});
 //test purpose
-router.get("/getteacher" ,async (req , res) => {
-  const data = await Teacher_Modal.findOne({_id : "659bb9dc920177f731a30acd"});
+router.get("/getteacher", async (req, res) => {
+  const data = await Teacher_Modal.findOne({ _id: "659bb9dc920177f731a30acd" });
   // let subject = "POMs"
   // if(data.subject.includes(subject)){
   //   res.json({msg : "u can create "})
@@ -96,8 +88,8 @@ router.get("/getteacher" ,async (req , res) => {
   // else{
   //   res.json({msg : "u cannot  create "})
   // }
-  res.json(data)
-})
+  res.json(data);
+});
 
 router.post(
   "/savemessage",
@@ -111,17 +103,19 @@ router.post(
     const findmsg = await groupchatmsg.findOne({ group: group._id });
     if (findmsg) {
       const result = await groupchatmsg.findOneAndUpdate(
-        {group : group._id},
-        {$push: {
-          messages: {
-            from: id,
-            model_type: type,
-            message,
+        { group: group._id },
+        {
+          $push: {
+            messages: {
+              from: id,
+              model_type: type,
+              message,
+            },
           },
-        }},
-        {new: true},
+        },
+        { new: true }
       );
-      const new_added_data = result.messages[result.messages.length - 1]
+      const new_added_data = result.messages[result.messages.length - 1];
       res.json(new_added_data);
     } else {
       const result = await groupchatmsg.create({
@@ -133,7 +127,7 @@ router.post(
           message,
         },
       });
-      console.log("message is createed")
+      console.log("message is createed");
       res.json(result);
     }
   }
@@ -147,22 +141,23 @@ router.post(
     const { subjectName } = req.body;
     const group = await Group.findOne({ subject: subjectName });
 
-    
-    const chatmsg = await groupchatmsg.findOne({ group: group._id } , {_id : 0, __v : 0});
-    if(chatmsg != null){
-      const filtered_chat_messages =  chatmsg.messages.map((message) => {
-        const temp_message = {}
-          if ((message.from).toString() === id.toString()){
-            temp_message.self = true
-          }else{
-            temp_message.self = false
-          }
-          temp_message.message = message.message
-          return temp_message
-        })
-        res.json(filtered_chat_messages)
+    const chatmsg = await groupchatmsg.findOne(
+      { group: group._id },
+      { _id: 0, __v: 0 }
+    );
+    if (chatmsg != null) {
+      const filtered_chat_messages = chatmsg.messages.map((message) => {
+        const temp_message = {};
+        if (message.from.toString() === id.toString()) {
+          temp_message.self = true;
+        } else {
+          temp_message.self = false;
+        }
+        temp_message.message = message.message;
+        return temp_message;
+      });
+      res.json(filtered_chat_messages);
     }
-   
   }
 );
 

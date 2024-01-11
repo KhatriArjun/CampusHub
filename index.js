@@ -3,7 +3,6 @@ import { createServer } from "node:http";
 import preprocessingRoutes from "./plagiarism/preprocessing.js";
 import mongoose from "mongoose";
 import "dotenv/config.js";
-import { v4 as uuidv4 } from 'uuid';
 
 import passport from "passport";
 import Student from "./Model/Student.js";
@@ -15,21 +14,19 @@ import settingRoutes from "./routes/setting.js";
 import dashboardRoutes from "./routes/dashboard.js";
 import path from "path";
 import messageRoutes from "./routes/message.js";
-import json from "jsonwebtoken"
+import json from "jsonwebtoken";
 import cors from "cors";
 
 import { Server } from "socket.io";
 import { Strategy } from "passport-jwt";
 import { ExtractJwt } from "passport-jwt";
 
-import initilize_socket from "./server_socket.js"
-import connect_to_db from "./connect_to_db.js"
-
+import initilize_socket from "./server_socket.js";
+import connect_to_db from "./connect_to_db.js";
 
 const app = express();
 app.use(cors({}));
-connect_to_db()
-
+connect_to_db();
 
 let opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
@@ -71,10 +68,9 @@ passport.use(
   })
 );
 
-
 const server = createServer(app);
 
-initilize_socket(server)
+initilize_socket(server);
 
 app.use(express.json());
 app.use("/auth", authRoutes);

@@ -9,6 +9,7 @@ import Teacher from "../Model/Teacher.js";
 import Student from "../Model/Student.js";
 import Assignment from "../Model/Assignment.js";
 import TokenizeDB from "../Model/Tokenizedata.js";
+import Submitted_Assignment_Model from "../Model/Submitted_Assignment.js";
 import detectThreshold from "../plagiarism/kmpalgo.js";
 import { unlink } from "node:fs";
 import path from "path";
@@ -19,9 +20,7 @@ router.post(
   async (req, res) => {
     const { title, description, deadline, subject } = req.body;
     if (!title || !description || !deadline || !subject) {
-      res
-        .status(404)
-        .json({ error: "Insufficient data to create an assignment" });
+      res.json({ err: "Insufficient data to create an assignment" });
     }
 
     const id = req.user.user._id;
@@ -38,7 +37,7 @@ router.post(
         subject,
         owner: user._id,
       };
-      
+
       const newassignment = await Assignment.create(newData);
       // const assignId = await Assignment.findOne({
       //   owner: user._id,
@@ -51,7 +50,7 @@ router.post(
       // })
       // console.log(assignId);
 
-      res.status(201).json(newassignment);
+      res.json(newassignment);
     }
   }
 );
@@ -121,9 +120,10 @@ const upload = multer({ storage });
 
 const plagiarism = async (req, res, next) => {
   const assignId = req.params.assignId;
-  const filename = req.user.user._id;
+  const filename = req.user.user._id; // filename is assigned as student id
 
   const currentdata = await preprocess(filename);
+  console.log(currentdata);
   const __dirname = path.resolve();
   const absolutePath = path.resolve(__dirname, `./pdf/${filename}.pdf`);
   const checkdata = await TokenizeDB.findOne({
@@ -133,13 +133,13 @@ const plagiarism = async (req, res, next) => {
   if (checkdata != null) {
     console.log("called");
     const length = checkdata.tokens.length;
-    console.log(length);
+    console.log("Line 138", length);
     let count = 0;
     for (let i = 0; i < length; i++) {
       const prevdata = checkdata.tokens[i];
       // console.log(prevdata);
       const threshold = detectThreshold(currentdata, prevdata);
-      console.log(threshold);
+      console.log("Line 144", threshold);
       if (threshold >= 30) {
         console.log("threshold");
         unlink(absolutePath, (err) => {
@@ -154,9 +154,10 @@ const plagiarism = async (req, res, next) => {
     }
     if (count == 0) {
       req.currentdata = currentdata;
+      req.absolutePath = absolutePath;
       next();
     } else {
-      res.json({ message: "breached" });
+      res.json({ err: "Threshold breached. Please submit again !!" });
     }
   } else {
     console.log("else called");
@@ -165,7 +166,18 @@ const plagiarism = async (req, res, next) => {
       assignment: assignId,
       tokens: currentdata,
     });
-    res.status(204).json({ message: "Successfully created" });
+    console.log(finaldata);
+
+    const submit_data = await Submitted_Assignment_Model.create({
+      assignment: assignId,
+      submitted_students_detail: {
+        student: filename,
+        submitted_date: Date.now(),
+        file_path: absolutePath,
+      },
+    });
+
+    res.json({ message: "Successfully created and submitted" });
   }
 };
 
@@ -178,34 +190,91 @@ router.post(
   async (req, res) => {
     const assignId = req.params.assignId;
     const currentdata = req.currentdata;
+    const sid = req.user.user._id;
 
     console.log("update called");
-    const finaldata = await TokenizeDB.updateOne(
-      {
-        assignment: assignId,
-      },
-      {
-        $push: { tokens: currentdata },
-      },
-      {
-        new: true,
-      }
-    );
-    res.send(finaldata);
+
+    const checkdata = await Submitted_Assignment_Model.find({
+      submitted_students_detail: { $elemMatch: { student: sid } },
+    });
+    // console.log(checkdata);
+    // const size = checkdata[0].submitted_students_detail.length;
+
+    // let poke = 0;
+    // for (let i = 0; i < size; i++) {
+    //   // console.log("value", checkdata[0].submitted_students_detail[i].student);
+    //   // console.log("sid: ", sid);
+    //   if (
+    //     checkdata[0].submitted_students_detail[i].student.toString() ==
+    //     sid.toString()
+    //   ) {
+    //     poke++;
+    //   }
+    // }
+    // console.log("this is: ", poke);
+
+    if (checkdata.length == 0) {
+      const finaldata = await TokenizeDB.updateOne(
+        {
+          assignment: assignId,
+        },
+        {
+          $push: { tokens: currentdata },
+        },
+        {
+          new: true,
+        }
+      );
+      const data = await Submitted_Assignment_Model.updateOne(
+        {
+          assignment: assignId,
+        },
+        {
+          $push: {
+            submitted_students_detail: {
+              student: req.user.user._id,
+              submitted_date: Date.now(),
+              file_path: req.absolutePath,
+            },
+          },
+        },
+        {
+          new: true,
+        }
+      );
+      console.log("if called");
+      res.send({ finaldata, data });
+    } else {
+      console.log("error cannot upload twice");
+      res.json({ err: "Cannot upload twice" });
+    }
   }
 );
 
-router.get("/get_assignment_detail/:id" ,
-           passport.authenticate("jwt", { session: false }),
-            async (req , res) => {
-            const subject_id = req.params.id
-            const assignment_detail = await Assignment.find({_id : subject_id})
-            if(assignment_detail.length !== 0){
-              res.json(assignment_detail)
-            }else{
-              res.json({error : "cannot find assignment or id is not valid"})
-            }
+router.get(
+  "/get_assignment_detail/:id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const subject_id = req.params.id;
+    const assignment_detail = await Assignment.find({ _id: subject_id });
+    if (assignment_detail.length !== 0) {
+      res.json(assignment_detail);
+    } else {
+      res.json({ err: "cannot find assignment or id is not valid" });
+    }
+  }
+);
 
-})
+router.get(
+  "/get_list_students/:assignId",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const id = req.params.assignId;
+    console.log(id);
+    const list = await Submitted_Assignment_Model.findOne({ assignment: id });
+    console.log(list);
+    res.json(list.submitted_students_detail);
+  }
+);
 
 export default router;
