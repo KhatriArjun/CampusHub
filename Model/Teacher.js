@@ -9,7 +9,6 @@ const Teacher = new mongoose.Schema({
   phone: { type: String },
   address: { type: String },
   subject: { type: [String], require: true },
-  student: { type: mongoose.Types.ObjectId, ref: "Student" },
 });
 
 const Teacher_Modal = mongoose.model("Teacher", Teacher);

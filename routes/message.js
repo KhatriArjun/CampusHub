@@ -1,5 +1,4 @@
 import express from "express";
-
 import "dotenv/config";
 import passport from "passport";
 let router = express.Router();
@@ -9,15 +8,17 @@ import Student_Model from "../Model/Student.js";
 import groupchatmsg from "../Model/Group_chat_messages.js";
 import Student_Modal from "../Model/Student.js";
 
+import Submitted_Assignment_Modal from "../Model/Submitted_Assignment.js"
+import Assignment_Model from "../Model/Assignment.js";
+
+
 router.post(
   "/creategroup",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     const { subjectName, groupName } = req.body;
     const type = req.user.type;
-    console.log("this is id",req.user.user._id)
     const id = req.user.user._id;
-    console.log("this is type",type)
     if (type == "Teacher") {
 
       const data = await Teacher_Modal.findOne({ _id: id });
@@ -31,7 +32,6 @@ router.post(
           res.json({ msg: "You are not allowed to create this group" });
         }else{
           const checkgroup = await Group.findOne({ subject: subjectName });
-          console.log("check group",checkgroup)
     
           if (checkgroup) {
             res.json({ err: "Already exist" });
@@ -46,46 +46,10 @@ router.post(
               collaborators: students,
             };
             const result = await Group.create(newdata);
-            console.log("This from result group created",result)
             res.json(result);
           }
         }
         }
-
-      // const checkgroup = await Group.findOne({ subject: subjectName });
-      // console.log("check group",checkgroup)
-
-      // if (checkgroup) {
-      //   res.json({ err: "Already exist" });
-      // } 
-      // else {
-      //   const data = await Teacher_Modal.findOne({ _id: id });
-      //   if (!data) {
-      //     res.json({ err: "Teacher is not found" });
-      //   }
-
-      //   const subject = data.subject.includes(subjectName);
-
-      //   if(subject === false){
-      //     res.json({ msg: "You are not allowed to create this group" });
-      //   }
-
-      //   else{
-      //     const list = await Student_Model.find({ subjects: subjectName });
-      //     const students = list.map((student) => student._id.toString());
-  
-      //     const newdata = {
-      //       subject: subjectName,
-      //       name: groupName,
-      //       teacher: id,
-      //       collaborators: students,
-      //     };
-      //     const result = await Group.create(newdata);
-      //     console.log("This from result group created",result)
-      //     res.json(result);
-      //   }
-        
-      // }
     } else {
       res.json({ err: "Not Allowed" });
     }
@@ -111,27 +75,18 @@ router.get(
   }
 );
 
+// test purpose
 router.get("/get_all_groups",
      async (req , res) => {
       //  const student = await Student_Model.find();
-      //  const group = await Group.find()
-      //  res.json({group , student})
-      //  if((group.length) !== 0){
-      //   res.json(group)
-      //  }else{
-      //   res.json({msg : "aaa"})
-      //  }
-      const check_chat = await Group.findOne({subject : "Microprocessor"})
-      const id = check_chat._id
+ 
 
-      
-      const group_chat_messages = await groupchatmsg.findOne({group : id} , {group : 0 , _id : 0 , __v : 0})
-
-      res.json(group_chat_messages)
+      const assignment = await Assignment_Model.findOne({_id : "659e6fee06f7ae1287a1cc5c"})
+      res.send(assignment)
        
 
 })
-
+//test purpose
 router.get("/getteacher" ,async (req , res) => {
   const data = await Teacher_Modal.findOne({_id : "659bb9dc920177f731a30acd"});
   // let subject = "POMs"
@@ -150,7 +105,6 @@ router.post(
   async (req, res) => {
     const { subjectName, message } = req.body;
     const group = await Group.findOne({ subject: subjectName });
-    console.log("the group message is" , group)
 
     const id = req.user.user._id;
     const type = req.user.type;
@@ -168,7 +122,6 @@ router.post(
         {new: true},
       );
       const new_added_data = result.messages[result.messages.length - 1]
-      console.log("newly added data is " , new_added_data)
       res.json(new_added_data);
     } else {
       const result = await groupchatmsg.create({
@@ -180,6 +133,7 @@ router.post(
           message,
         },
       });
+      console.log("message is createed")
       res.json(result);
     }
   }
@@ -190,7 +144,6 @@ router.post(
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     const id = req.user.user._id;
-    console.log("this is use  id  in get message router " , id)
     const { subjectName } = req.body;
     const group = await Group.findOne({ subject: subjectName });
 
@@ -199,7 +152,6 @@ router.post(
     if(chatmsg != null){
       const filtered_chat_messages =  chatmsg.messages.map((message) => {
         const temp_message = {}
-        console.log(`check id is ${message.from} == ${id}` ,((message.from).toString() === id.toString()))
           if ((message.from).toString() === id.toString()){
             temp_message.self = true
           }else{

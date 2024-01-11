@@ -74,13 +74,13 @@ router.get(
     const sub = req.params.subject;
     const user = await Student.findOne({ _id: id });
     if (!user) {
-      res.status(501).json({ err: "Only Students are allowed" });
+      res.json({ err: "Only Students are allowed" });
     }
     const assignment = await Assignment.find({ subject: sub });
     if (assignment) {
-      res.status(201).json(assignment);
+      res.json(assignment);
     } else {
-      res.status(404).json({ err: "Assignment not found" });
+      res.json({ err: "Assignment not found" });
     }
   }
 );
@@ -193,5 +193,18 @@ router.post(
     res.send(finaldata);
   }
 );
+
+router.get("/get_assignment_detail/:id" ,
+           passport.authenticate("jwt", { session: false }),
+            async (req , res) => {
+            const subject_id = req.params.id
+            const assignment_detail = await Assignment.find({_id : subject_id})
+            if(assignment_detail.length !== 0){
+              res.json(assignment_detail)
+            }else{
+              res.json({error : "cannot find assignment or id is not valid"})
+            }
+
+})
 
 export default router;
