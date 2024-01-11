@@ -30,15 +30,6 @@ const app = express();
 app.use(cors({}));
 connect_to_db()
 
-// mongoose.connect(
-//     `mongodb+srv://campushub4u:${process.env.Password}@cluster1.ozwg2bh.mongodb.net/?retryWrites=true&w=majority`
-//   )
-//   .then((x) => {
-//     console.log("connected to database");
-//   })
-//   .catch((err) => {
-//     console.log("error while connecting:", err);
-//   });
 
 let opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
@@ -84,36 +75,6 @@ passport.use(
 const server = createServer(app);
 
 initilize_socket(server)
-
-
-
-
-
-// io.on("connection", (socket) => {
-
-//   console.log("User connected", socket.id);
-
-//   socket.on("join_room", (data) => {
-//     console.log("joined to room" , data)
-//     socket.join(data);
-//     console.log("user with id:", socket.id, "connected in a room:", data);
-//   });
-
-//   socket.on("send_message", (data) => {
-
-
-//     // received_message_data.message = data.message
-//     console.log("the data is ",data);
-//     // console.log("the message to send is ", received_message_data)
-//     socket.to(data.subjectName).emit("receive_message", data);
- 
-
-//   })
-//   socket.on("disconnect", () => {
-//     console.log("User disconnected", socket.id);
-//   });
-// })
-
 
 app.use(express.json());
 app.use("/auth", authRoutes);
