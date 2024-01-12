@@ -5,6 +5,32 @@ import path from "path";
 import { log } from "console";
 
 const eng = [
+  "a",
+  "b",
+  "c",
+  "d",
+  "e",
+  "f",
+  "g",
+  "h",
+  "i",
+  "j",
+  "k",
+  "l",
+  "m",
+  "n",
+  "o",
+  "p",
+  "q",
+  "r",
+  "s",
+  "t",
+  "u",
+  "v",
+  "w",
+  "x",
+  "y",
+  "z",
   "0",
   "1",
   "2",
@@ -1189,9 +1215,8 @@ const preprocess = (filename) => {
         console.log(err);
         reject(err);
       } else if (!item) {
-        tokenizeData = tokenizeData.filter((value) => !eng.includes(value));
-
         tokenizeData = tokenizeData.map((token) => lemmatizer(token));
+        tokenizeData = tokenizeData.filter((value) => !eng.includes(value));
 
         // console.log(tokenizeData);
         resolve(tokenizeData);
