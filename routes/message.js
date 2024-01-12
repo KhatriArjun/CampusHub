@@ -78,14 +78,19 @@ router.get(
 // test purpose
 router.get("/get_all_groups",
      async (req , res) => {
-      //  const student = await Student_Model.find();
- 
+       const student = await Submitted_Assignment_Modal.find(
+        { submitted_students_detail:
+          { $elemMatch:
+            { student: "659ce93ba94d06ae662c031c" }
+            }
+          })
 
-      const assignment = await Assignment_Model.findOne({_id : "659e6fee06f7ae1287a1cc5c"})
-      res.send(assignment)
-       
 
-})
+      // const assignment = await Submitted_Assignment_Modal.find()
+      res.send(student)
+
+        })
+
 //test purpose
 router.get("/getteacher" ,async (req , res) => {
   const data = await Teacher_Modal.findOne({_id : "659bb9dc920177f731a30acd"});
