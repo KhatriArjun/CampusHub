@@ -13,6 +13,8 @@ import Submitted_Assignment_Model from "../Model/Submitted_Assignment.js";
 import detectThreshold from "../plagiarism/kmpalgo.js";
 import { unlink } from "node:fs";
 import path from "path";
+import fs from "fs";
+import load_pdf_content from "../utils/get_pdf_content.js"
 router.post(
   "/createAssignment",
   passport.authenticate("jwt", { session: false }),
@@ -39,16 +41,6 @@ router.post(
       };
 
       const newassignment = await Assignment.create(newData);
-      // const assignId = await Assignment.findOne({
-      //   owner: user._id,
-      //   subject: subject,
-      // });
-      // const update = await Student.updateMany({
-      //   subject:"Web Technology"
-      // }, {
-
-      // })
-      // console.log(assignId);
 
       res.json(newassignment);
     }
@@ -104,14 +96,17 @@ router.get(
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     // console.log("this is req from destination: ", req);
-
-    return cb(null, "./pdf");
+    console.log("second middleware called");
+    return cb(null, "./pdf/");
   },
   filename: function (req, file, cb) {
     // console.log("this is req from filename: ", req);
-
+    const assignId = req.params.assignId;
+    const filename = req.user.user._id;
+    const file_path =
+      assignId.toString().trim() + "_" + filename.toString().trim();
     // return cb(null, `${req.user._id}_${file.originalname}`);
-    return cb(null, `${req.user.user._id}.pdf`);
+    return cb(null, `${file_path.toString()}.pdf`);
     // return cb(null, `${file.originalname}`);
   },
 });
@@ -119,13 +114,16 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 const plagiarism = async (req, res, next) => {
+  console.log("third middleware called");
   const assignId = req.params.assignId;
   const filename = req.user.user._id; // filename is assigned as student id
-
-  const currentdata = await preprocess(filename);
+  const file_path =
+    assignId.toString().trim() + "_" + filename.toString().trim();
+  console.log("the file multer middleware ", filename);
+  const currentdata = await preprocess(file_path.toString());
   console.log(currentdata);
   const __dirname = path.resolve();
-  const absolutePath = path.resolve(__dirname, `./pdf/${filename}.pdf`);
+  const absolutePath = path.resolve(__dirname, `./pdf/${file_path}.pdf`);
   const checkdata = await TokenizeDB.findOne({
     assignment: assignId,
   });
@@ -172,7 +170,7 @@ const plagiarism = async (req, res, next) => {
       assignment: assignId,
       submitted_students_detail: {
         student: filename,
-        submitted_date: Date.now(),
+        submitted_date: new Date().toLocaleDateString().toString(),
         file_path: absolutePath,
       },
     });
@@ -181,9 +179,35 @@ const plagiarism = async (req, res, next) => {
   }
 };
 
+const check_if_file_already_exists = async (req, res, next) => {
+  const id = req.user.user._id;
+  const assignId = req.params.assignId;
+  // console.log("user id is" , id)
+  // console.log("assignment id is" , assignId)
+
+  const checkdata = await Submitted_Assignment_Model.findOne(
+    {assignment: assignId},
+    {submitted_students_detail: { $elemMatch: { student: id }}} );
+    
+  console.log("check data is after i managed" ,  checkdata)
+  if(!checkdata || Object.keys(checkdata).length == 0){
+
+    next()
+  }else{
+    res.json({ err: "you cannot upload assignment twice." });
+  }
+
+  // if (checkdata.length >= 1) {
+  //   // console.log(" uploaded twice");
+    
+  // }
+
+};
+
 router.post(
   "/submitAssignment/:assignId",
   passport.authenticate("jwt", { session: false }),
+  check_if_file_already_exists,
   upload.single("file"),
   plagiarism,
 
@@ -192,28 +216,17 @@ router.post(
     const currentdata = req.currentdata;
     const sid = req.user.user._id;
 
-    console.log("update called");
+    // console.log("update called");
 
     const checkdata = await Submitted_Assignment_Model.find({
       submitted_students_detail: { $elemMatch: { student: sid } },
     });
-    // console.log(checkdata);
-    // const size = checkdata[0].submitted_students_detail.length;
 
-    // let poke = 0;
-    // for (let i = 0; i < size; i++) {
-    //   // console.log("value", checkdata[0].submitted_students_detail[i].student);
-    //   // console.log("sid: ", sid);
-    //   if (
-    //     checkdata[0].submitted_students_detail[i].student.toString() ==
-    //     sid.toString()
-    //   ) {
-    //     poke++;
-    //   }
-    // }
-    // console.log("this is: ", poke);
-
+    // console.log("check if sutdent has submited or not", checkdata);
     if (checkdata.length == 0) {
+      // console.log("if called");
+      const dates = new Date().toLocaleDateString().toString() 
+      
       const finaldata = await TokenizeDB.updateOne(
         {
           assignment: assignId,
@@ -233,7 +246,7 @@ router.post(
           $push: {
             submitted_students_detail: {
               student: req.user.user._id,
-              submitted_date: Date.now(),
+              submitted_date: dates,
               file_path: req.absolutePath,
             },
           },
@@ -242,8 +255,8 @@ router.post(
           new: true,
         }
       );
-      console.log("if called");
-      res.send({ finaldata, data });
+      // console.log("if called");
+      res.json({ message: "Successfully created and submitted" });
     } else {
       console.log("error cannot upload twice");
       res.json({ err: "Cannot upload twice" });
@@ -257,6 +270,7 @@ router.get(
   async (req, res) => {
     const subject_id = req.params.id;
     const assignment_detail = await Assignment.find({ _id: subject_id });
+    // const assignment_detail = await Submitted_Assignment_Model.findOne({ assignment: subject_id }).populate("assignment").exec();
     if (assignment_detail.length !== 0) {
       res.json(assignment_detail);
     } else {
@@ -270,11 +284,46 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     const id = req.params.assignId;
-    console.log(id);
-    const list = await Submitted_Assignment_Model.findOne({ assignment: id });
-    console.log(list);
-    res.json(list.submitted_students_detail);
+    // console.log(id);
+    const list = await Submitted_Assignment_Model.findOne({
+      assignment: id,
+    }).populate({
+      path: "submitted_students_detail.student",
+      select: "s_name ",
+    });
+
+    try {
+      res.json(list.submitted_students_detail);
+    } catch (err) {
+      res.json([{ err: "No one has submitted assignment yet" }]);
+    }
   }
 );
+
+router.get("/view_student_submitted_assignment/:assignId_studentId",
+passport.authenticate("jwt", { session: false }),
+async (req,res)=>{
+
+  const split_params = req.params.assignId_studentId.split("_")
+  const assign_id = split_params[0] 
+  const s_id = split_params[1] 
+  
+  const __dirname = path.resolve();
+  const absolutePath = path.resolve(__dirname, `./pdf/${req.params.assignId_studentId}.pdf`);
+
+  const checkdata = await Submitted_Assignment_Model.find({
+    assignment: assign_id,
+    "submitted_students_detail.student": s_id,
+  });
+  if(checkdata.length === 0){
+    res.send([{content : "cannot find the requested student assignment"}])
+  }
+  else{
+
+    const pdf_data = await load_pdf_content(absolutePath)
+    res.json([{content : pdf_data.toString()}])
+  }
+}
+)
 
 export default router;

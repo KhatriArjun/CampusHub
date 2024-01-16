@@ -109,7 +109,22 @@
                 "Statistics I"
             ],
             "address": "butwal-10"
+        },
+        {
+            "id": "T10028",
+            "name": "Rajendra",
+            "email": "manmohanlals.doe@example.com",
+            "phone": "1234567890",
+            "subject":[
+                "Theory of Computation",
+                "Computer Networks",
+                "Operating Systems",
+                "Database Management System",
+                "Artificial Intelligence"
+            ],
+            "address": "butwal-10"
         }
+
     ],
     "Students": [
         {
@@ -238,6 +253,30 @@
             "email": "john.doe@example.com",
             "phone": "1234567890",
             "batch": "2079",
+            "address": "butwal-12"
+        },
+        {
+            "id": "S10023",
+            "name": "Arjun",
+            "email": "john.doe@example.com",
+            "phone": "1234567890",
+            "batch": "2079",
+            "address": "butwal-12"
+        },
+        {
+            "id": "S10024",
+            "name": "Aashis",
+            "email": "john.doe@example.com",
+            "phone": "1234567890",
+            "batch": "2078",
+            "address": "butwal-12"
+        },
+        {
+            "id": "S10025",
+            "name": "Hari",
+            "email": "john.doe@example.com",
+            "phone": "1234567890",
+            "batch": "2078",
             "address": "butwal-12"
         }
       

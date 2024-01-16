@@ -1204,6 +1204,7 @@ const eng = [
 ];
 
 const preprocess = (filename) => {
+  // console.log("preprocess is called")
   const __dirname = path.resolve();
   const absolutePath = path.resolve(__dirname, `./pdf/${filename}.pdf`);
   let newData = "";
@@ -1218,7 +1219,6 @@ const preprocess = (filename) => {
         tokenizeData = tokenizeData.map((token) => lemmatizer(token));
         tokenizeData = tokenizeData.filter((value) => !eng.includes(value));
 
-        // console.log(tokenizeData);
         resolve(tokenizeData);
       } else if (item.text) {
         newData += item.text.toLowerCase();

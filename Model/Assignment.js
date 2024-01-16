@@ -8,7 +8,7 @@ const Assignment = new mongoose.Schema({
 
   title: { type: String },
   description: { type: String },
-  deadline: { type: Date },
+  deadline: { type: String },
   subject: { type: String },
 });
 

@@ -71,7 +71,11 @@ passport.use(
 const server = createServer(app);
 
 initilize_socket(server);
+app.get("/test" , (req,res) => {
+  res.send("working")
+})
 
+app.use("/pdf" , express.static("pdf"))
 app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/preprocessing", preprocessingRoutes);

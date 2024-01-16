@@ -6,11 +6,16 @@ import Group from "../Model/Group.js";
 import Teacher_Modal from "../Model/Teacher.js";
 import Student_Model from "../Model/Student.js";
 import groupchatmsg from "../Model/Group_chat_messages.js";
-import Student_Modal from "../Model/Student.js";
-import Otp_Model from "../Model/Otp.js";
 
+import Otp_Model from "../Model/Otp.js";
+import TokenizeData_Model from "../Model/Tokenizedata.js"
 import Submitted_Assignment_Modal from "../Model/Submitted_Assignment.js";
 import Assignment_Model from "../Model/Assignment.js";
+import fs from "fs"
+import path from "path"
+import { PdfReader } from "pdfreader";
+
+import * as pdfjsLib from 'pdfjs-dist';
 
 router.post(
   "/creategroup",
@@ -24,7 +29,7 @@ router.post(
       if (!data) {
         res.json({ err: "Teacher is not found" });
       } else {
-        const subject = data.subject.includes(subjectName);
+        const subject = data.subjects.includes(subjectName);
 
         if (subject === false) {
           res.json({ msg: "You are not allowed to create this group" });
@@ -74,10 +79,15 @@ router.get(
 );
 
 // test purpose
+
+
 router.get("/get_all_groups", async (req, res) => {
-  const del = await Otp_Model.deleteMany();
-  res.send(del);
+  const a = await groupchatmsg.find()
+  const b = await Group.find()
+  res.json({chatmessage : a , group : b})
+
 });
+
 //test purpose
 router.get("/getteacher", async (req, res) => {
   const data = await Teacher_Modal.findOne({ _id: "659bb9dc920177f731a30acd" });
@@ -127,7 +137,7 @@ router.post(
           message,
         },
       });
-      console.log("message is createed");
+      // console.log("message is createed");
       res.json(result);
     }
   }

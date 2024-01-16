@@ -101,7 +101,7 @@ router.post("/register/otp", async (req, res) => {
         t_name: name,
         address,
         phone,
-        subject,
+        subjects : subject,
         password: hashedPassword,
         email,
       };
@@ -125,14 +125,14 @@ router.post("/register/otp", async (req, res) => {
     if (!data) {
       res.status(400).json({ error: "Invalid Id" });
     }
-    console.log(data[0]);
+    // console.log(data[0]);
     const { name, email, phone, batch, address, id } = data[0];
     let subject1;
     const sem = semCalculate(batch);
 
-    console.log("sem:", sem);
+    // console.log("sem:", sem);
     const subject = subDB[sem.year];
-    console.log(subject);
+    // console.log(subject);
     const sem1 = Object.keys(subject);
     if (sem.sem == 0) {
       subject1 = subject[sem1[sem.sem]];
@@ -158,7 +158,7 @@ router.post("/register/otp", async (req, res) => {
       };
 
       const StudentData = await StudentModel.create(newStudentData);
-      console.log("register student check" , StudentData)
+      // console.log("register student check" , StudentData)
       const token = await getToken("Student", StudentData);
       const userToReturn = { ...StudentData.toJSON(), token };
       delete userToReturn.password;
@@ -167,7 +167,7 @@ router.post("/register/otp", async (req, res) => {
         {subject : {$in : StudentData.subjects}},
         { $push: { collaborators: (StudentData._id).toString() } }
         )
-        console.log("added_new_student_to_group" , added_new_student_to_group)
+        // console.log("added_new_student_to_group" , added_new_student_to_group)
       return res.status(200).json(userToReturn);
     }  }
     else {

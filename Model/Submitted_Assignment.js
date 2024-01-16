@@ -5,7 +5,7 @@ const Submitted_Assignment = new mongoose.Schema({
   submitted_students_detail: [
     {
       student: { type: mongoose.Types.ObjectId, ref: "Student" },
-      submitted_date: Date,
+      submitted_date: String,
       file_path: String,
     },
   ],

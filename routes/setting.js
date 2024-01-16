@@ -44,7 +44,7 @@ router.post(
     const id = req.user.user._id;
     const type = req.user.type;
 
-    console.log(id);
+    // console.log(id);
 
     if (type == "Teacher") {
       const dbData = await teacherModel.findOne({

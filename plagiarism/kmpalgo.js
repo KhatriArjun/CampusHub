@@ -676,8 +676,8 @@ const KMPSearch = (pat, txt) => {
       j = lps[j - 1];
 
       count++;
-      console.log("count", count);
-      console.log("pattern found between: ", pat, txt);
+      // console.log("count", count);
+      // console.log("pattern found between: ", pat, txt);
     }
 
     // mismatch after j matches
@@ -693,21 +693,21 @@ const KMPSearch = (pat, txt) => {
 
 const detectThreshold = (string1, string2) => {
   let total_len1 = string1.length;
-  console.log("pailo string", total_len1);
+  // console.log("pailo string", total_len1);
   let total_len2 = string2.length;
-  console.log("dosro string", total_len2);
+  // console.log("dosro string", total_len2);
   let match = 0;
   string1.map((token) => {
     string2.map((tokens) => {
       match += KMPSearch(tokens, token);
-      console.log("match", match);
+      // console.log("match", match);
     });
   });
-  console.log("this is match", match);
+  // console.log("this is match", match);
   let total_len = total_len1 + total_len2;
-  console.log("this is total len", total_len);
+  // console.log("this is total len", total_len);
   let threshold = (match / total_len) * 100;
-  console.log("threshold fo kmp", threshold);
+  // console.log("threshold fo kmp", threshold);
   return threshold;
 };
 

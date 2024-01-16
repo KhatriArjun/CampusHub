@@ -8,7 +8,7 @@ const Teacher = new mongoose.Schema({
   t_name: { type: String },
   phone: { type: String },
   address: { type: String },
-  subject: { type: [String], require: true },
+  subjects: { type: [String], require: true },
 });
 
 const Teacher_Modal = mongoose.model("Teacher", Teacher);
