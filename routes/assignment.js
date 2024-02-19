@@ -96,7 +96,7 @@ router.get(
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     // console.log("this is req from destination: ", req);
-    console.log("second middleware called");
+    // console.log("second middleware called");
     return cb(null, "./pdf/");
   },
   filename: function (req, file, cb) {
@@ -114,14 +114,13 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 const plagiarism = async (req, res, next) => {
-  console.log("third middleware called");
+  // console.log("third middleware called");
   const assignId = req.params.assignId;
   const filename = req.user.user._id; // filename is assigned as student id
-  const file_path =
-    assignId.toString().trim() + "_" + filename.toString().trim();
-  console.log("the file multer middleware ", filename);
+  const file_path = assignId.toString().trim() + "_" + filename.toString().trim();
+  // console.log("the file multer middleware ", filename);
   const currentdata = await preprocess(file_path.toString());
-  console.log(currentdata);
+  // console.log(currentdata);
   const __dirname = path.resolve();
   const absolutePath = path.resolve(__dirname, `./pdf/${file_path}.pdf`);
   const checkdata = await TokenizeDB.findOne({
@@ -129,9 +128,9 @@ const plagiarism = async (req, res, next) => {
   });
   // console.log(checkdata);
   if (checkdata != null) {
-    console.log("called");
+    // console.log("called");
     const length = checkdata.tokens.length;
-    console.log("Line 138", length);
+    // console.log("Line 138", length);
     let count = 0;
     for (let i = 0; i < length; i++) {
       const prevdata = checkdata.tokens[i];
@@ -139,10 +138,10 @@ const plagiarism = async (req, res, next) => {
       const threshold = detectThreshold(currentdata, prevdata);
       console.log("Line 144", threshold);
       if (threshold >= 30) {
-        console.log("threshold");
+        // console.log("threshold");
         unlink(absolutePath, (err) => {
           if (err) throw err;
-          console.log("file was deleted");
+          // console.log("file was deleted");
         });
         count++;
         break;
@@ -158,13 +157,13 @@ const plagiarism = async (req, res, next) => {
       res.json({ err: "Threshold breached. Please submit again !!" });
     }
   } else {
-    console.log("else called");
-    console.log(assignId);
+    // console.log("else called");
+    // console.log(assignId);
     const finaldata = await TokenizeDB.create({
       assignment: assignId,
       tokens: currentdata,
     });
-    console.log(finaldata);
+    // console.log(finaldata);
 
     const submit_data = await Submitted_Assignment_Model.create({
       assignment: assignId,
@@ -189,7 +188,7 @@ const check_if_file_already_exists = async (req, res, next) => {
     {assignment: assignId},
     {submitted_students_detail: { $elemMatch: { student: id }}} );
     
-  console.log("check data is after i managed" ,  checkdata)
+  // console.log("check data is after i managed" ,  checkdata)
   if(!checkdata || Object.keys(checkdata).length == 0){
 
     next()
@@ -258,7 +257,7 @@ router.post(
       // console.log("if called");
       res.json({ message: "Successfully created and submitted" });
     } else {
-      console.log("error cannot upload twice");
+      // console.log("error cannot upload twice");
       res.json({ err: "Cannot upload twice" });
     }
   }

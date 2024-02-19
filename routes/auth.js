@@ -74,7 +74,7 @@ else{
 
 router.post("/register/otp", async (req, res) => {
   const { value } = req.body;
-  console.log(global.id);
+  // console.log(global.id);
 
   if (global.id[0] == "T") {
     const data = DB.Teachers.filter((value) => {
@@ -188,7 +188,7 @@ router.post("/register/student", async (req, res) => {
     }
     
   });
-  console.log(data)
+  // console.log(data)
   if (data.length==0) {
     res.status(400).json({ error: "Invalid Id" });
   }

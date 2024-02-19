@@ -29,7 +29,7 @@ router.get(
       const subdata = await student_Model.findOne({
         _id: id,
       });
-      console.log("the data from student home " , subdata.s_name)
+      // console.log("the data from student home " , subdata.s_name)
       const subjectDB = subdata.subjects;
 
       const datas = await Assignment_Model.find({

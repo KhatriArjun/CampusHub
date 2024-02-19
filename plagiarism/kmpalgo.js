@@ -620,6 +620,8 @@
 //     count++;
 //   }
 // };
+
+
 function computeLPSArray(pat, M, lps) {
   // length of the previous longest prefix suffix
   var len = 0;

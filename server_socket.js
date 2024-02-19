@@ -30,6 +30,15 @@ const initilize_socket = (server) => {
        
       
         })
+        socket.on("typing" , (data)=>{
+          console.log("user typing" , data)
+          socket.to(data.subject).emit("user_typing" , data)
+          // socket.broadcast.emit("user_typing", data);
+        })
+        socket.on("message_sent" , (data) => {
+          socket.to(data.subject).emit("user_sent_message", data);
+
+        })
         socket.on("disconnect", () => {
           console.log("User disconnected", socket.id);
         });

@@ -82,9 +82,20 @@ router.get(
 
 
 router.get("/get_all_groups", async (req, res) => {
-  const a = await groupchatmsg.find()
-  const b = await Group.find()
-  res.json({chatmessage : a , group : b})
+  // const a = await groupchatmsg.find()
+  // const b = await Group.find()
+  // res.json({chatmessage : a , group : b})
+
+  const g = await Group.find({ })
+  .populate({
+    path: "collaborators",
+    select: "_id s_name"
+  })
+  .populate({
+    path: "teacher",select : "_id t_name"
+  });
+
+res.json(g);
 
 });
 
@@ -170,5 +181,34 @@ router.post(
     }
   }
 );
+
+router.get("/group_members/:subject_name",
+  passport.authenticate("jwt",
+ { session: false }), 
+ async (req , res) =>{
+  const {subject_name} = req.params
+  const type =   req.user.type
+  const group_members = await Group.find({ subject: subject_name})
+  .populate({
+    path: "collaborators",
+    select: "_id s_name"
+  })
+  .populate({
+    path: "teacher",select : "_id t_name"
+  });
+  
+  let is_admin = false
+  if(type === "Teacher"){
+    is_admin = true
+  }
+
+  const group_members_data = {
+    admin : is_admin,
+    members : group_members
+  }
+console.log(group_members_data)
+res.json(group_members_data);
+})
+
 
 export default router;
