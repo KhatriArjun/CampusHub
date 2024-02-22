@@ -181,15 +181,15 @@ const plagiarism = async (req, res, next) => {
 const check_if_file_already_exists = async (req, res, next) => {
   const id = req.user.user._id;
   const assignId = req.params.assignId;
-  // console.log("user id is" , id)
-  // console.log("assignment id is" , assignId)
+  console.log("user id is" , id)
+  console.log("assignment id is" , assignId)
 
-  const checkdata = await Submitted_Assignment_Model.findOne(
+  const {submitted_students_detail} = await Submitted_Assignment_Model.findOne(
     {assignment: assignId},
     {submitted_students_detail: { $elemMatch: { student: id }}} );
     
-  // console.log("check data is after i managed" ,  checkdata)
-  if(!checkdata || Object.keys(checkdata).length == 0){
+  console.log("check data is after i managed" ,  submitted_students_detail)
+  if(!submitted_students_detail || submitted_students_detail.length == 0){
 
     next()
   }else{
@@ -211,6 +211,7 @@ router.post(
   plagiarism,
 
   async (req, res) => {
+    console.log("The response came up to here")
     const assignId = req.params.assignId;
     const currentdata = req.currentdata;
     const sid = req.user.user._id;
@@ -221,7 +222,7 @@ router.post(
       submitted_students_detail: { $elemMatch: { student: sid } },
     });
 
-    // console.log("check if sutdent has submited or not", checkdata);
+    console.log("check if sutdent has submited or not", checkdata);
     if (checkdata.length == 0) {
       // console.log("if called");
       const dates = new Date().toLocaleDateString().toString() 
