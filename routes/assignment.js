@@ -184,12 +184,12 @@ const check_if_file_already_exists = async (req, res, next) => {
   console.log("user id is" , id)
   console.log("assignment id is" , assignId)
 
-  const {submitted_students_detail} = await Submitted_Assignment_Model.findOne(
+  const check_data = await Submitted_Assignment_Model.findOne(
     {assignment: assignId},
     {submitted_students_detail: { $elemMatch: { student: id }}} );
     
-  console.log("check data is after i managed" ,  submitted_students_detail)
-  if(!submitted_students_detail || submitted_students_detail.length == 0){
+  console.log("check data is after i managed" ,  check_data)
+  if(!check_data || check_data.submitted_students_detail.length == 0 || Object.keys(check_data).length == 0){
 
     next()
   }else{
@@ -216,14 +216,14 @@ router.post(
     const currentdata = req.currentdata;
     const sid = req.user.user._id;
 
-    // console.log("update called");
+    console.log("The assignment id is :" , assignId);
 
-    const checkdata = await Submitted_Assignment_Model.find({
-      submitted_students_detail: { $elemMatch: { student: sid } },
-    });
+    // const checkdata = await Submitted_Assignment_Model.findOne({
+    //   submitted_students_detail: { $elemMatch: { student: sid } },
+    // });
 
-    console.log("check if sutdent has submited or not", checkdata);
-    if (checkdata.length == 0) {
+    // console.log("check in main route if sutdent has submited or not", checkdata);
+   
       // console.log("if called");
       const dates = new Date().toLocaleDateString().toString() 
       
@@ -257,10 +257,7 @@ router.post(
       );
       // console.log("if called");
       res.json({ message: "Successfully created and submitted" });
-    } else {
-      // console.log("error cannot upload twice");
-      res.json({ err: "Cannot upload twice" });
-    }
+    
   }
 );
 
