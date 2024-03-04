@@ -10,17 +10,17 @@ export const sendEmail = async (email) => {
     host: "smtp.ethereal.email",
     port: 587,
     auth: {
-      user: 'kasey.considine58@ethereal.email',
-      pass: 'bJjrUSMxfY2Q6Q668z'
+      user: 'aglae.baumbach@ethereal.email',
+      pass: 'vJKk5h2GxPgGTYhS7E'
   }
   });
   async function main() {
     const info = await transporter.sendMail({
       from: '"Fred Foo" <campushub@gmail.com>',
       to: email,
-      subject: "Hello ",
-      text: `${otp}`,
-      html: `<b>${otp}</b>`,
+      subject: "Your OTP",
+      text: `Please do not share this OTP with others. \n ${otp}`,
+      html: `<strong>Please do not share this OTP with others.</strong> <br> <b>${otp}</b>`,
     });
   }
   main();

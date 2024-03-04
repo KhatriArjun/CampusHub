@@ -95,8 +95,7 @@ router.get(
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    // console.log("this is req from destination: ", req);
-    // console.log("second middleware called");
+
     return cb(null, "./pdf/");
   },
   filename: function (req, file, cb) {
@@ -218,13 +217,6 @@ router.post(
 
     console.log("The assignment id is :" , assignId);
 
-    // const checkdata = await Submitted_Assignment_Model.findOne({
-    //   submitted_students_detail: { $elemMatch: { student: sid } },
-    // });
-
-    // console.log("check in main route if sutdent has submited or not", checkdata);
-   
-      // console.log("if called");
       const dates = new Date().toLocaleDateString().toString() 
       
       const finaldata = await TokenizeDB.updateOne(
@@ -267,7 +259,7 @@ router.get(
   async (req, res) => {
     const subject_id = req.params.id;
     const assignment_detail = await Assignment.find({ _id: subject_id });
-    // const assignment_detail = await Submitted_Assignment_Model.findOne({ assignment: subject_id }).populate("assignment").exec();
+
     if (assignment_detail.length !== 0) {
       res.json(assignment_detail);
     } else {

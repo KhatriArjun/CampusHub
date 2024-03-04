@@ -82,9 +82,7 @@ router.get(
 
 
 router.get("/get_all_groups", async (req, res) => {
-  // const a = await groupchatmsg.find()
-  // const b = await Group.find()
-  // res.json({chatmessage : a , group : b})
+
 
   const g = await Group.find({ })
   .populate({
@@ -102,13 +100,7 @@ res.json(g);
 //test purpose
 router.get("/getteacher", async (req, res) => {
   const data = await Teacher_Modal.findOne({ _id: "659bb9dc920177f731a30acd" });
-  // let subject = "POMs"
-  // if(data.subject.includes(subject)){
-  //   res.json({msg : "u can create "})
-  // }
-  // else{
-  //   res.json({msg : "u cannot  create "})
-  // }
+
   res.json(data);
 });
 
