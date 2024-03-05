@@ -1,91 +1,13 @@
 {
   "Teachers": [
     {
-      "id": "T12345",
-      "name": "John Doe",
-      "email": "john.doe@example.com",
-      "phone": "1234567890",
-      "subject": ["Web Technology"],
-      "address": "butwal-10"
-    },
-    {
-      "id": "T12349",
-      "name": "Hari Prasad",
-      "email": "john.doe@example.com",
-      "phone": "1234567890",
-      "subject": ["C Programming"],
-      "address": "butwal-10"
-    },
-    {
-      "id": "T12356",
-      "name": "John Don",
-      "email": "john.doe@example.com",
-      "phone": "1234567890",
-      "subject": ["Microprocessor"],
-      "address": "butwal-10"
-    },
-    {
-      "id": "T12312",
-      "name": "Ramu Aryal",
-      "email": "john.doe@example.com",
-      "phone": "1234567890",
-      "subject": ["Database Management System"],
-      "address": "butwal-10"
-    },
-    {
-      "id": "T12390",
-      "name": "Mohan lal",
-      "email": "john.doe@example.com",
-      "phone": "1234567890",
-      "subject": ["Advanced Java Programming"],
-      "address": "butwal-10"
-    },
-    {
-      "id": "T10020",
-      "name": "Mohans lals",
-      "email": "john.doe@example.com",
-      "phone": "1234567890",
-      "subject": ["Advanced Java Programming"],
-      "address": "butwal-10"
-    },
-    {
-      "id": "T10021",
-      "name": "Manmohan lals",
-      "email": "johns12.doe@example.com",
-      "phone": "1234567890",
-      "subject": ["Advanced Java Programming"],
-      "address": "butwal-10"
-    },
-    {
-      "id": "T10022",
-      "name": "Manmohans lals",
-      "email": "manmohanlals.doe@example.com",
-      "phone": "1234567890",
-      "subject": ["Advanced Java Programming"],
-      "address": "butwal-10"
-    },
-    {
-      "id": "T10023",
-      "name": "Manmohans lals",
-      "email": "manmohanlals.doe@example.com",
-      "phone": "1234567890",
-      "subject": ["Advanced Java Programming"],
-      "address": "butwal-10"
-    },
-    {
-      "id": "T10024",
-      "name": "hari prasad",
-      "email": "manmohanlals.doe@example.com",
-      "phone": "1234567890",
-      "subject": ["Advanced Java Programming"],
-      "address": "butwal-10"
-    },
-    {
       "id": "T10025",
-      "name": "Shyam",
+      "name": "Ryam",
       "email": "manmohanlals.doe@example.com",
       "phone": "1234567890",
-      "subject": ["Advanced Java Programming"],
+      "subject": [
+        "Internship"
+      ],
       "address": "butwal-10"
     },
     {
@@ -100,7 +22,7 @@
         "Operating Systems",
         "Cryptography",
         "Software Engineering",
-        "Advanced Java Programming",        
+        "Advanced Java Programming",
         "Advanced Database"
       ],
       "address": "butwal-10"
@@ -130,6 +52,16 @@
         "Operating Systems",
         "Database Management System",
         "Artificial Intelligence"
+      ],
+      "address": "butwal-10"
+    },
+    {
+      "id": "T10029",
+      "name": "Rajendra1",
+      "email": "manmohanlals.doe@example.com",
+      "phone": "1234567890",
+      "subject": [
+        "Digital Logic"
       ],
       "address": "butwal-10"
     }
@@ -287,12 +219,6 @@
       "batch": "2078",
       "address": "butwal-12"
     },
-
-
-
-
-
-
     {
       "id": "S10026",
       "name": "Girija",

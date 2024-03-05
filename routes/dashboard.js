@@ -14,18 +14,26 @@ router.get(
     const id = req.user.user._id;
 
     if (type == "Teacher") {
-      const get_teacher_name = await Teacher_Modal.findOne({_id : id} , {_id : 0, __v: 0, username : 0, password : 0,email : 0, phone : 0, address : 0,id : 0})
-      const teacher = get_teacher_name
+      const get_teacher_name = await Teacher_Modal.findOne(
+        { _id: id },
+        {
+          _id: 0,
+          __v: 0,
+          username: 0,
+          password: 0,
+          email: 0,
+          phone: 0,
+          address: 0,
+          id: 0,
+        }
+      );
+      const teacher = get_teacher_name;
       const data = await Assignment_Model.find({
         owner: id,
       });
-
-      res.json({data , teacher});
-
-
-    }
-    
-    else if (type == "Student") {
+      console.log(get_teacher_name);
+      res.json({ data, teacher });
+    } else if (type == "Student") {
       const subdata = await student_Model.findOne({
         _id: id,
       });
@@ -34,12 +42,14 @@ router.get(
 
       const datas = await Assignment_Model.find({
         subject: { $in: subjectDB },
-      }).populate({path : "owner" , select : "t_name -_id"}).exec();
-      
+      })
+        .populate({ path: "owner", select: "t_name -_id" })
+        .exec();
+
       const temp_data = {
-        data : datas,
-        s_name : subdata.s_name
-      }
+        data: datas,
+        s_name: subdata.s_name,
+      };
       res.json(temp_data);
     }
   }

@@ -1216,8 +1216,8 @@ const preprocess = (filename) => {
         console.log(err);
         reject(err);
       } else if (!item) {
-        tokenizeData = tokenizeData.map((token) => lemmatizer(token));
-        tokenizeData = tokenizeData.filter((value) => !eng.includes(value));
+        tokenizeData = tokenizeData.map((token) => lemmatizer(token)); //lemmitization eg: 'running' as an 'run'
+        tokenizeData = tokenizeData.filter((value) => !eng.includes(value)); //stopwords like 'a' 'is' 'an' 'the' etc
 
         resolve(tokenizeData);
       } else if (item.text) {
@@ -1226,11 +1226,12 @@ const preprocess = (filename) => {
         // newData = newData.trim().split(/\s+/);
         // console.log("1.1:", newData);
         let punctuationless = newData.replace(
+          //data cleaning
           /[.,\/#!$%\^&\*;:{}=\-_`~()]/g,
           " "
         );
 
-        newData = punctuationless.replace(/\s{2,}/g, " ");
+        newData = punctuationless.replace(/\s{2,}/g, " "); //data cleaning
 
         tokenizeData = newData.split(/\W+/);
       }
