@@ -6,7 +6,7 @@
       "email": "manmohanlals.doe@example.com",
       "phone": "1234567890",
       "subject": [
-        "Internship"
+        "Web Technology"
       ],
       "address": "butwal-10"
     },
@@ -229,7 +229,7 @@
     },
     {
       "id": "S10027",
-      "name": "Girija1",
+      "name": "Bipin",
       "email": "john.doe@example.com",
       "phone": "1234567890",
       "batch": "2076",
