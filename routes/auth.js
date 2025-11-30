@@ -2,9 +2,9 @@ import express from "express";
 let router = express.Router();
 import getToken from "../utils/helper.js";
 import bcrypt from "bcrypt";
-import DB from "../SCHOOLDB/schoolDB.json" assert { type: "json" };
+import DB from "../SCHOOLDB/schoolDB.json" with {type:"json"};
 import NepaliDate from "nepali-datetime";
-import subDB from "../SCHOOLDB/subject_db.json" assert { type: "json" };
+import subDB from "../SCHOOLDB/subject_db.json" with {type:"json"};
 import TeacherModel from "../Model/Teacher.js";
 import StudentModel from "../Model/Student.js";
 import OtpModel from "../Model/Otp.js";
@@ -52,24 +52,22 @@ router.post("/register/teacher", async (req, res) => {
       return value;
     }
   });
-  if (data.length==0) {
+  if (data.length == 0) {
     res.status(400).json({ error: "Invalid Id" });
-  }
-else{
-  const { name, email, phone, subject, address } = data[0];
-  const teacher = await TeacherModel.findOne({ id: Tid });
-  if (teacher) {
-    return res
-      .status(401)
-      .json({ error: "A teacher with same id already exists" });
-  }
+  } else {
+    const { name, email, phone, subject, address } = data[0];
+    const teacher = await TeacherModel.findOne({ id: Tid });
+    if (teacher) {
+      return res
+        .status(401)
+        .json({ error: "A teacher with same id already exists" });
+    }
 
-  //OTP verification
-  await sendEmail(email);
+    //OTP verification
+    await sendEmail(email);
 
-  return res.status(200).json({ message: "Successfully verified !!" });
-}
-  
+    return res.status(200).json({ message: "Successfully verified !!" });
+  }
 });
 
 router.post("/register/otp", async (req, res) => {
@@ -101,7 +99,7 @@ router.post("/register/otp", async (req, res) => {
         t_name: name,
         address,
         phone,
-        subjects : subject,
+        subjects: subject,
         password: hashedPassword,
         email,
       };
@@ -114,9 +112,7 @@ router.post("/register/otp", async (req, res) => {
     } else {
       res.status(403).json({ error: "Wrong OTP detected" });
     }
-  }
-  
-   else {
+  } else {
     const data = DB.Students.filter((value) => {
       if (value.id == global.id) {
         return value;
@@ -143,34 +139,34 @@ router.post("/register/otp", async (req, res) => {
     }
     const user_otp = await OtpModel.findOne({ value: value });
     if (user_otp) {
-     const is_deleted_otp =  await OtpModel.findOneAndDelete({ value: value });
-     if(is_deleted_otp._id){
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const newStudentData = {
-        id: id,
-        username,
-        s_name: name,
-        address,
-        batch,
-        password: hashedPassword,
-        email,
-        subjects: subject1,
-      };
+      const is_deleted_otp = await OtpModel.findOneAndDelete({ value: value });
+      if (is_deleted_otp._id) {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newStudentData = {
+          id: id,
+          username,
+          s_name: name,
+          address,
+          batch,
+          password: hashedPassword,
+          email,
+          subjects: subject1,
+        };
 
-      const StudentData = await StudentModel.create(newStudentData);
-      // console.log("register student check" , StudentData)
-      const token = await getToken("Student", StudentData);
-      const userToReturn = { ...StudentData.toJSON(), token };
-      delete userToReturn.password;
+        const StudentData = await StudentModel.create(newStudentData);
+        // console.log("register student check" , StudentData)
+        const token = await getToken("Student", StudentData);
+        const userToReturn = { ...StudentData.toJSON(), token };
+        delete userToReturn.password;
 
-     const added_new_student_to_group =  await Group_Model.updateMany(
-        {subject : {$in : StudentData.subjects}},
-        { $push: { collaborators: (StudentData._id).toString() } }
-        )
+        const added_new_student_to_group = await Group_Model.updateMany(
+          { subject: { $in: StudentData.subjects } },
+          { $push: { collaborators: StudentData._id.toString() } }
+        );
         // console.log("added_new_student_to_group" , added_new_student_to_group)
-      return res.status(200).json(userToReturn);
-    }  }
-    else {
+        return res.status(200).json(userToReturn);
+      }
+    } else {
       res.status(405).json({ error: "OTP doesnot match" });
     }
   }
@@ -186,25 +182,23 @@ router.post("/register/student", async (req, res) => {
     if (value.id == Sid) {
       return value;
     }
-    
   });
   // console.log(data)
-  if (data.length==0) {
+  if (data.length == 0) {
     res.status(400).json({ error: "Invalid Id" });
-  }
-  else{
+  } else {
     const { name, email, phone, batch, address } = data[0];
-  const student = await StudentModel.findOne({ id: Sid });
-  if (student) {
-    return res
-      .status(401)
-      .json({ error: "A student with same id already exists" });
-  }
+    const student = await StudentModel.findOne({ id: Sid });
+    if (student) {
+      return res
+        .status(401)
+        .json({ error: "A student with same id already exists" });
+    }
 
-  //OTP verification
-  await sendEmail(email);
+    //OTP verification
+    await sendEmail(email);
 
-  return res.status(200).json({ message: "Successfully verified !!" });
+    return res.status(200).json({ message: "Successfully verified !!" });
   }
 });
 
@@ -250,7 +244,7 @@ router.post("/login/otp", async (req, res) => {
   const { value } = req.body;
 
   const user = await OtpModel.findOne({ value: value });
-  
+
   if (!user) {
     res.status(403).json({ err: "Otp doesnot matches!!" });
   } else {

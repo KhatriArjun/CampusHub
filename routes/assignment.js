@@ -14,7 +14,7 @@ import detectThreshold from "../plagiarism/kmpalgo.js";
 import { unlink } from "node:fs";
 import path from "path";
 import fs from "fs";
-import load_pdf_content from "../utils/get_pdf_content.js"
+import load_pdf_content from "../utils/get_pdf_content.js";
 router.post(
   "/createAssignment",
   passport.authenticate("jwt", { session: false }),
@@ -95,7 +95,6 @@ router.get(
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-
     return cb(null, "./pdf/");
   },
   filename: function (req, file, cb) {
@@ -116,7 +115,8 @@ const plagiarism = async (req, res, next) => {
   // console.log("third middleware called");
   const assignId = req.params.assignId;
   const filename = req.user.user._id; // filename is assigned as student id
-  const file_path = assignId.toString().trim() + "_" + filename.toString().trim();
+  const file_path =
+    assignId.toString().trim() + "_" + filename.toString().trim();
   // console.log("the file multer middleware ", filename);
   const currentdata = await preprocess(file_path.toString());
   // console.log(currentdata);
@@ -156,8 +156,6 @@ const plagiarism = async (req, res, next) => {
       res.json({ err: "Threshold breached. Please submit again !!" });
     }
   } else {
-    // console.log("else called");
-    // console.log(assignId);
     const finaldata = await TokenizeDB.create({
       assignment: assignId,
       tokens: currentdata,
@@ -180,26 +178,29 @@ const plagiarism = async (req, res, next) => {
 const check_if_file_already_exists = async (req, res, next) => {
   const id = req.user.user._id;
   const assignId = req.params.assignId;
-  console.log("user id is" , id)
-  console.log("assignment id is" , assignId)
+  console.log("user id is", id);
+  console.log("assignment id is", assignId);
 
   const check_data = await Submitted_Assignment_Model.findOne(
-    {assignment: assignId},
-    {submitted_students_detail: { $elemMatch: { student: id }}} );
-    
-  console.log("check data is after i managed" ,  check_data)
-  if(!check_data || check_data.submitted_students_detail.length == 0 || Object.keys(check_data).length == 0){
+    { assignment: assignId },
+    { submitted_students_detail: { $elemMatch: { student: id } } }
+  );
 
-    next()
-  }else{
+  console.log("check data is after i managed", check_data);
+  if (
+    !check_data ||
+    check_data.submitted_students_detail.length == 0 ||
+    Object.keys(check_data).length == 0
+  ) {
+    next();
+  } else {
     res.json({ err: "you cannot upload assignment twice." });
   }
 
   // if (checkdata.length >= 1) {
   //   // console.log(" uploaded twice");
-    
-  // }
 
+  // }
 };
 
 router.post(
@@ -210,46 +211,45 @@ router.post(
   plagiarism,
 
   async (req, res) => {
-    console.log("The response came up to here")
+    console.log("The response came up to here");
     const assignId = req.params.assignId;
     const currentdata = req.currentdata;
     const sid = req.user.user._id;
 
-    console.log("The assignment id is :" , assignId);
+    console.log("The assignment id is :", assignId);
 
-      const dates = new Date().toLocaleDateString().toString() 
-      
-      const finaldata = await TokenizeDB.updateOne(
-        {
-          assignment: assignId,
-        },
-        {
-          $push: { tokens: currentdata },
-        },
-        {
-          new: true,
-        }
-      );
-      const data = await Submitted_Assignment_Model.updateOne(
-        {
-          assignment: assignId,
-        },
-        {
-          $push: {
-            submitted_students_detail: {
-              student: req.user.user._id,
-              submitted_date: dates,
-              file_path: req.absolutePath,
-            },
+    const dates = new Date().toLocaleDateString().toString();
+
+    const finaldata = await TokenizeDB.updateOne(
+      {
+        assignment: assignId,
+      },
+      {
+        $push: { tokens: currentdata },
+      },
+      {
+        new: true,
+      }
+    );
+    const data = await Submitted_Assignment_Model.updateOne(
+      {
+        assignment: assignId,
+      },
+      {
+        $push: {
+          submitted_students_detail: {
+            student: req.user.user._id,
+            submitted_date: dates,
+            file_path: req.absolutePath,
           },
         },
-        {
-          new: true,
-        }
-      );
-      // console.log("if called");
-      res.json({ message: "Successfully created and submitted" });
-    
+      },
+      {
+        new: true,
+      }
+    );
+    // console.log("if called");
+    res.json({ message: "Successfully created and submitted" });
   }
 );
 
@@ -289,30 +289,31 @@ router.get(
   }
 );
 
-router.get("/view_student_submitted_assignment/:assignId_studentId",
-passport.authenticate("jwt", { session: false }),
-async (req,res)=>{
+router.get(
+  "/view_student_submitted_assignment/:assignId_studentId",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const split_params = req.params.assignId_studentId.split("_");
+    const assign_id = split_params[0];
+    const s_id = split_params[1];
 
-  const split_params = req.params.assignId_studentId.split("_")
-  const assign_id = split_params[0] 
-  const s_id = split_params[1] 
-  
-  const __dirname = path.resolve();
-  const absolutePath = path.resolve(__dirname, `./pdf/${req.params.assignId_studentId}.pdf`);
+    const __dirname = path.resolve();
+    const absolutePath = path.resolve(
+      __dirname,
+      `./pdf/${req.params.assignId_studentId}.pdf`
+    );
 
-  const checkdata = await Submitted_Assignment_Model.find({
-    assignment: assign_id,
-    "submitted_students_detail.student": s_id,
-  });
-  if(checkdata.length === 0){
-    res.send([{content : "cannot find the requested student assignment"}])
+    const checkdata = await Submitted_Assignment_Model.find({
+      assignment: assign_id,
+      "submitted_students_detail.student": s_id,
+    });
+    if (checkdata.length === 0) {
+      res.send([{ content: "cannot find the requested student assignment" }]);
+    } else {
+      const pdf_data = await load_pdf_content(absolutePath);
+      res.json([{ content: pdf_data.toString() }]);
+    }
   }
-  else{
-
-    const pdf_data = await load_pdf_content(absolutePath)
-    res.json([{content : pdf_data.toString()}])
-  }
-}
-)
+);
 
 export default router;
