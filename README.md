@@ -32,7 +32,7 @@ CampusHub Backend is a Node.js and Express-based server designed to handle authe
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/CampusHub.git
+git clonehttps://github.com/KhatriArjun/CampusHub.git
 cd CampusHub
 ```
 
